@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Similar People</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* Custom styles can be added here */
+        .card-icon {
+            font-size: 3rem;
+        }
+
+        .card-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 py-4 fixed z-10 w-full">
+        <div class="container mx-auto flex justify-between items-center px-4">
+
+            <a href="#" class="text-2xl font-bold"> <i class="fa-solid fa-hashtag"></i> Similar People</a>
+            <div class="flex space-x-4">
+                <a href="#" class="text-lg font-bold text-white relative overflow-hidden mx-4">
+                    <span class="hover-fill">Home</span>
+                </a>
+                <a href="#" class="text-lg font-bold text-white relative overflow-hidden mx-4">
+                    <span class="hover-fill">Explore</span>
+                </a>
+                <a href="/login" class="text-lg font-bold text-white relative overflow-hidden mx-4">
+                    <span class="hover-fill">Login</span>
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- Hero Section with Video Background -->
+    <section class="h-screen flex flex-col justify-center text-center relative">
+        <!-- Video Background -->
+        <video autoplay muted loop class="absolute inset-0 object-cover w-full h-full">
+            <source src="/Hero Footage Demo.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <!-- Content Overlay -->
+        <div class="bg-black bg-opacity-50 absolute inset-0"></div>
+
+        <!-- Content -->
+        <div class="container mx-auto relative z-10">
+            <h1 class="text-4xl font-bold mb-4 text-white">Connect Globally with Similar People</h1>
+            <p class="text-lg mb-8 text-white">Share your thoughts, connect with others, and explore a world of
+                possibilities.</p>
+            <a href="#About"
+                class="inline-block bg-white text-blue-900 py-2 px-6 rounded-full transition-transform duration-300 ease-in-out transform hover:scale-110 hover:shadow-lg">Explore
+                More</a>
+        </div>
+    </section>
+
+
+    <!-- About Section -->
+    <section class="bg-gray-900 py-16" id="About">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="w-[400px] md:w-1/2 text-center md:text-left mb-5">
+                <h2 class="text-3xl font-bold mb-4">About Similar People</h2>
+                <p class="text-lg mb-6">Similar People is not just a social media platform; it's your digital
+                    community, a space where connections flourish and ideas resonate. Dive into a world where sharing
+                    experiences, exploring diverse content, and engaging in meaningful conversations are at the heart of
+                    everything we do. Join us to discover new horizons, forge lasting friendships, and make your voice
+                    heard in a supportive and vibrant environment.</p>
+                <a href="/login" class="inline-block bg-blue-900 text-white py-2 px-6 rounded-full">Join Our
+                    Community</a>
+            </div>
+            <div class="w-full md:w-1/2 ml-8 shadow-lg">
+                <img src="/pexels-sharefaith-491036-1231230.jpg" alt="About Image" class="rounded-lg shadow-lg">
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Features Section -->
+    <section id="features" class="py-16">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature Card 1 -->
+            <div class="bg-gray-800 rounded-lg p-6 flex flex-col justify-center items-center">
+                <i class="fas fa-pen-square card-icon mb-4"></i>
+                <h2 class="text-2xl font-bold mb-4">Share Posts</h2>
+                <p class="text-center">Share your thoughts, stories, and ideas with the community.</p>
+            </div>
+            <!-- Feature Card 2 -->
+            <div class="bg-gray-800 rounded-lg p-6 flex flex-col justify-center items-center">
+                <i class="fas fa-comments card-icon mb-4"></i>
+                <h2 class="text-2xl font-bold mb-4">Forum Discussions</h2>
+                <p class="text-center">Engage in meaningful discussions and connect with like-minded individuals.</p>
+            </div>
+            <!-- Feature Card 3 -->
+            <div class="bg-gray-800 rounded-lg p-6 flex flex-col justify-center items-center">
+                <i class="fas fa-globe-americas card-icon mb-4"></i>
+                <h2 class="text-2xl font-bold mb-4">Connect Globally</h2>
+                <p class="text-center">Build relationships, find friends, and expand your network globally.</p>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- How It Works Section -->
+    <section class="bg-blue-900 py-16">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center text-white">How It Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Step 1 -->
+                <div class="flex items-center mb-6">
+                    <div class="bg-gray-800 rounded-full h-12 w-12 flex items-center justify-center">
+                        <span class="text-white">1</span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold mb-2">Create Your Account</h3>
+                        <p>Sign up for free and set up your profile to get started.</p>
+                    </div>
+                </div>
+                <!-- Step 2: Discover Content -->
+                <div class="flex items-center mb-6">
+                    <div class="bg-gray-800 rounded-full h-12 w-12 flex items-center justify-center">
+                        <span class="text-white">2</span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold mb-2">Find New Content</h3>
+                        <p>Explore a variety of content including posts, videos, and discussions tailored to your
+                            interests.</p>
+                    </div>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex items-center mb-6">
+                    <div class="bg-gray-800 rounded-full h-12 w-12 flex items-center justify-center">
+                        <span class="text-white">3</span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold mb-2">Engage and Share</h3>
+                        <p>Engage in discussions, share content, and build meaningful relationships.</p>
+                    </div>
+                </div>
+                <!-- Additional Step -->
+                <div class="flex items-center mb-6">
+                    <div class="bg-gray-800 rounded-full h-12 w-12 flex items-center justify-center">
+                        <span class="text-white">4</span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-bold mb-2">Discover Communities</h3>
+                        <p>Explore and join communities that match your interests and connect with like-minded
+                            individuals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="bg-gray-900 py-16">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center text-white">Testimonials</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-gray-800 rounded-lg p-6 flex flex-col justify-center items-center">
+                    <i class="fas fa-quote-left text-3xl mb-4"></i>
+                    <p class="text-lg mb-4">Similar People has transformed how I connect with others online. It's easy
+                        to use, and I've met some amazing people through the platform!</p>
+                    <p class="text-sm font-bold">John Doe</p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div class="bg-gray-800 rounded-lg p-6 flex flex-col justify-center items-center">
+                    <i class="fas fa-quote-left text-3xl mb-4"></i>
+                    <p class="text-lg mb-4">I love the variety of communities on Similar People. It's a great place to
+                        learn, share, and grow with others who share similar interests.</p>
+                    <p class="text-sm font-bold">Jane Smith</p>
+                </div>
+                <!-- Testimonial 3 -->
+                <div class="bg-gray-800 rounded-lg p-6 flex flex-col justify-center items-center">
+                    <i class="fas fa-quote-left text-3xl mb-4"></i>
+                    <p class="text-lg mb-4">Being part of Similar People has been an enriching experience. The
+                        platform's focus on meaningful connections makes it stand out from others.</p>
+                    <p class="text-sm font-bold">David Johnson</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-8 text-center">
+        <div class="container mx-auto">
+            <p>&copy; 2024 Similar People. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

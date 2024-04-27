@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Page - Similar People</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a202c;
+            /* Dark mode background */
+            color: #e2e8f0;
+            /* Light text color */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .popular-forums,
+        .recent-posts,
+        .profile-section {
+            background-color: #2d3748;
+            /* Darker background */
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background-color: #4a5568;
+            /* Card background color */
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #e2e8f0;
+            /* Light text color */
+            margin-bottom: 0.5rem;
+        }
+
+        .card-content {
+            color: #cbd5e0;
+            /* Lighter text color */
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            background-color: #4a5568;
+            /* Darker button color */
+            color: #e2e8f0;
+            /* Light text color */
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background-color: #cbd5e0;
+            /* Button color on hover */
+        }
+
+        @keyframes fillBlue {
+            0% {
+                background-position: 0 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .text {
+            position: relative;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Popular Forums Section -->
+        <div class="popular-forums">
+            <h2 class="text-lg font-bold mb-4">Most Popular Forums</h2>
+            <ul>
+                <li><a href="#">Forum Title 1</a></li>
+                <li><a href="#">Forum Title 2</a></li>
+                <li><a href="#">Forum Title 3</a></li>
+                <!-- Add more popular forums as needed -->
+            </ul>
+        </div>
+
+        <!-- Recent Posts Section -->
+        <div class="recent-posts">
+            <h2 class="text-lg font-bold mb-4">Recent Forum Posts</h2>
+            <div class="filters mb-4">
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Technology</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Art & Design</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Music</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Science</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Sports</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Fashion</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Travel</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Food & Cooking</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Books & Literature</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors">Movies & TV</button>
+
+                <!-- Add more tag filters as needed -->
+            </div>
+            <!-- Sample Post Cards -->
+            <div class="card">
+                <h3 class="card-title">Post Title 1</h3>
+                <p class="card-content">Post content goes here. This is a sample post.</p>
+                <div class="meta mt-2">
+                    <span>Posted by Username</span>
+                    <span>2 hours ago</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Post Title 2</h3>
+                <p class="card-content">Post content goes here. This is another sample post.</p>
+                <div class="meta mt-2">
+                    <span>Posted by Another User</span>
+                    <span>1 day ago</span>
+                </div>
+            </div>
+            <!-- Add more recent posts as needed -->
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile-section text-center">
+            <h2 class="text-lg font-bold mb-4">Your Profile</h2>
+            <div class="profile-info flex flex-col items-center mb-4">
+                <img src="https://via.placeholder.com/150" alt="Profile Image" class="rounded-full w-18 h-18 mb-2">
+                <span class="font-semibold text">
+                    <%= username %>
+                </span>
+            </div>
+            <a href="/<%= username %>">View Profile</a>
+            <form action="/logout" method="POST" class="mt-2">
+                <button type="submit"
+                    class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-500 focus:outline-none focus:ring focus:border-blue-500">Logout</button>
+            </form>
+        </div>
+
+    </div>
+</body>
+
+</html>

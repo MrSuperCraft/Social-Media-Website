@@ -1,0 +1,21 @@
+.hover-fill {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.hover-fill::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: rgb(114, 114, 114);
+  /* Change this to your desired underline color */
+  transition: width 0.3s ease;
+}
+
+.hover-fill:hover::before {
+  width: 100%;
+}

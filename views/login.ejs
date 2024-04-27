@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Similar People</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #1a1a1a;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            /* Hide overflow to prevent scrollbars during loading */
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0;
+            /* Initially hidden */
+            transition: opacity 1s ease;
+            /* Smooth transition */
+        }
+
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            position: relative;
+            z-index: 2;
+            /* Ensure the form is above the background image */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 1;
+            /* Ensure the form is initially visible */
+            transition: opacity 0.5s ease;
+            /* Smooth transition */
+        }
+    </style>
+</head>
+
+<body class="text-white">
+    <img class="background-image" src="https://source.unsplash.com/1600x900/?pattern" alt="Background Image">
+
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-transparent rounded-lg shadow-lg p-8 max-w-md w-full form-container">
+            <h2 class="text-3xl font-bold mb-6 text-center">Welcome Back!</h2>
+            <form action="/sign-user-in" method="POST">
+                <div class="mb-4">
+                    <label for="email_username" class="block mb-2 text-white">Email Address / Username</label>
+                    <input type="text" id="email_username" name="email_username"
+                        placeholder="Enter an Email or Username"
+                        class="block w-full px-3 py-2 rounded-md bg-gray-700 focus:outline-none focus:ring focus:border-blue-500">
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block mb-2 text-white">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Your password"
+                        class="block w-full px-3 py-2 rounded-md bg-gray-700 focus:outline-none focus:ring focus:border-blue-500">
+                </div>
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:border-blue-500">Login</button>
+            </form>
+            <p class="text-sm mt-4 text-center text-gray-300">Don't have an account? <a href="/signup"
+                    class="text-blue-400 hover:underline">Sign up here</a>.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript to handle image load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const backgroundImage = document.querySelector('.background-image');
+            const image = new Image();
+            image.src = 'https://source.unsplash.com/1600x900/?pattern';
+
+            image.onload = function () {
+                // Once the image is loaded, show the background image with a smooth fade-in effect
+                backgroundImage.style.opacity = '1';
+            };
+        });
+    </script>
+</body>
+
+</html>

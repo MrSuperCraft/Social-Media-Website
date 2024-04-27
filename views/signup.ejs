@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Similar People</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #1a1a1a;
+            overflow: hidden;
+            /* Hide overflow to prevent scrollbars during loading */
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://source.unsplash.com/1600x900/?pattern');
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            z-index: 1;
+            /* Initially hidden */
+            transition: opacity 1s ease;
+            /* Smooth transition */
+        }
+
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2;
+        }
+
+        .password-conditions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .condition-image {
+            height: 30px;
+            width: 60px;
+            margin-right: 5px;
+            /* Add some space between the image and text */
+        }
+
+        .condition-met .condition-image {
+            content: url('/Safe.png');
+        }
+
+        .condition-not-met .condition-image {
+            content: url('/Not Safe.png');
+        }
+    </style>
+</head>
+
+<body class="text-white">
+    <div class="background-image"></div>
+
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-transparent rounded-lg shadow-lg p-8 max-w-md w-full form-container">
+            <h2 class="text-3xl font-bold mb-6 text-center">Sign Up to Similar People</h2>
+            <form action="/sign-user-up" method="POST" id="sign-up-form">
+                <div class="mb-4">
+                    <label for="username" class="block mb-2 text-white">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Your Username" required
+                        class="block w-full px-3 py-2 rounded-md bg-gray-700 focus:outline-none focus:ring focus:border-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block mb-2 text-white">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Your email" required
+                        class="block w-full px-3 py-2 rounded-md bg-gray-700 focus:outline-none focus:ring focus:border-blue-500">
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block mb-2 text-white">Password</label>
+                    <div class="password-checker">
+                        <input type="password" id="password" name="password" placeholder="Your password" required
+                            class="block w-full px-3 py-2 rounded-md bg-gray-700 focus:outline-none focus:ring focus:border-blue-500 mb-4">
+                        <div class="input-password-requirements">
+                            Passwords must include:
+                            <ul class="list-none p-0 space-y-2">
+                                <li id="lengthCondition" class="condition-not-met flex items-center">
+                                    <img src="/Not Safe.png" alt="Not Safe" class="condition-image mr-2">
+                                    <span>7 characters</span>
+                                </li>
+                                <li id="letterCondition" class="condition-not-met flex items-center">
+                                    <img src="/Not Safe.png" alt="Not Safe" class="condition-image mr-2">
+                                    <span>1 letter</span>
+                                </li>
+                                <li id="numberCondition" class="condition-not-met flex items-center">
+                                    <img src="/Not Safe.png" alt="Not Safe" class="condition-image mr-2">
+                                    <span>1 number</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:border-blue-500 mt-5">Sign
+                            Up</button>
+                    </div>
+                </div>
+            </form>
+            <!-- Error message display -->
+            <div id="error-message" class="text-red-500 text-md text-bold mt-2"></div>
+            <p class="text-sm mt-4 text-center text-gray-300">Already have an account? <a href="/login"
+                    class="text-blue-400 hover:underline">Login to your account</a>.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript to handle image load and form submission -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const background = document.querySelector('.background-image');
+            const formContainer = document.querySelector('.form-container');
+            const image = new Image();
+            image.src = 'https://source.unsplash.com/1600x900/?pattern';
+
+            image.onload = function () {
+                // Once the image is loaded, show the background with a smooth fade-in effect
+                background.style.opacity = '1';
+                // Show the form container after a slight delay for a smoother effect
+                setTimeout(() => {
+                    formContainer.style.opacity = '1';
+                }, 300);
+            };
+
+            const passwordInput = document.getElementById('password');
+            const lengthCondition = document.getElementById('lengthCondition');
+            const letterCondition = document.getElementById('letterCondition');
+            const numberCondition = document.getElementById('numberCondition');
+            const form = document.getElementById('sign-up-form');
+            const errorMessage = document.getElementById('error-message');
+
+            passwordInput.addEventListener('input', function () {
+                const password = passwordInput.value;
+                lengthCondition.classList.toggle('condition-met', password.length >= 7);
+                lengthCondition.classList.toggle('condition-not-met', password.length < 7);
+
+                letterCondition.classList.toggle('condition-met', /[A-Za-z]/.test(password));
+                letterCondition.classList.toggle('condition-not-met', !/[A-Za-z]/.test(password));
+
+                numberCondition.classList.toggle('condition-met', /\d/.test(password));
+                numberCondition.classList.toggle('condition-not-met', !/\d/.test(password));
+            });
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault(); // Prevent default form submission
+                const username = document.getElementById('username').value;
+                const password = passwordInput.value;
+
+                if (username.trim() === '') {
+                    errorMessage.textContent = 'Username cannot be empty.';
+                    return;
+                }
+
+                if (password.length < 7 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+                    errorMessage.textContent = 'Password is not secure enough.';
+                    return;
+                }
+
+                // Make a fetch request to check if the username is available
+                try {
+                    const response = await fetch('/check-username', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.available) {
+                        // Username is available, submit the form
+                        form.submit();
+                    } else {
+                        // Username is taken, show error message
+                        errorMessage.textContent = 'Username is already taken.';
+                    }
+                } catch (error) {
+                    console.error('Error checking username availability:', error);
+                    errorMessage.textContent = 'Error checking username availability.';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
