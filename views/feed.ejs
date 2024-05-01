@@ -163,8 +163,8 @@
         <!-- Profile Section -->
         <div class="profile-section text-center">
             <h2 class="text-lg font-bold mb-4">Your Profile</h2>
-            <div class="profile-info flex flex-col items-center mb-4">
-                <img src="https://via.placeholder.com/150" alt="Profile Image" class="rounded-full w-18 h-18 mb-2">
+            <div class="profile-info flex flex-col items-center mb-4 w-[100px] h-[100px]">
+                <img id="profilePicture" alt="Profile Image" class="rounded-full w-18 h-18 mb-2">
                 <span class="font-semibold text">
                     <%= username %>
                 </span>
@@ -177,6 +177,11 @@
         </div>
 
     </div>
+
+    <!-- scripts -->
+    <script src="/user.js"></script>
+    <script src="/profileLoad.js"></script>
+
 </body>
 
 </html>

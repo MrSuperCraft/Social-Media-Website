@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-900 text-white">
+
+    <div class="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold">User Settings</h2>
+            </div>
+            <form id="settingsForm" class="mt-8 space-y-6" action="#" method="POST">
+                <!-- Username -->
+                <div>
+                    <label for="username" class="block text-sm font-medium">Username</label>
+                    <input type="text" id="username" name="username" autocomplete="off"
+                        class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500"
+                        placeholder="Enter your username">
+                </div>
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium">Email</label>
+                    <input type="email" id="email" name="email" autocomplete="off"
+                        class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500"
+                        placeholder="Enter your email">
+                </div>
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-medium">Password</label>
+                    <input type="password" id="password" name="password" autocomplete="off"
+                        class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500"
+                        placeholder="Enter your password">
+                </div>
+                <!-- Profile Picture -->
+                <div>
+                    <label for="profile-picture" class="block text-sm font-medium">Profile Picture</label>
+                    <input type="file" id="profile-picture" name="profile-picture"
+                        class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500">
+                </div>
+                <!-- Banner Image -->
+                <div>
+                    <label for="banner-image" class="block text-sm font-medium">Banner Image</label>
+                    <input type="file" id="banner-image" name="banner-image"
+                        class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500">
+                </div>
+                <!-- Follow List -->
+                <div>
+                    <label for="follow-list" class="block text-sm font-medium">Follow List</label>
+                    <ul id="follow-list" class="mt-1 bg-gray-800 p-2 rounded-md overflow-y-auto max-h-40">
+                        <!-- Sample follow item -->
+                        <li class="flex justify-between items-center mb-2">
+                            <span class="truncate">Username 1</span>
+                            <button type="button"
+                                class="px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none">Follow</button>
+                        </li>
+                        <!-- Add more follow items dynamically -->
+                    </ul>
+                </div>
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit"
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Save
+                        Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/user/settings'); // Assuming this endpoint returns user data
+                if (!res.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+
+                const userData = await res.json();
+                populateForm(userData);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        function populateForm(userData) {
+            const form = document.getElementById('settingsForm');
+            if (!form) return;
+
+            form.querySelector('#username').value = userData.username;
+            form.querySelector('#email').value = userData.email;
+            // Populate other fields as needed
+        }
+
+    </script>
+</body>
+
+</html>

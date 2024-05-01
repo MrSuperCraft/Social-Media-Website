@@ -8,8 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Include Dropzone CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" rel="stylesheet">
-    <!-- Font Awesome CDN -->
     <link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" type="text/css" />
+
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         /* Add styles for the modal */
         .modal {
@@ -71,24 +73,32 @@
     <nav>
         <a href="/feed"></a>
     </nav>
-    <main class="max-w-5xl mx-auto">
+    <main class="max-w-5xl mx-auto transition-all duration-300">
         <section class="banner relative mt-8">
             <div class="banner-content bg-white h-48 relative" style="border-radius: 20px;">
-                <img src="<%= user.bannerImage || '/Mind Palace Cover Art.png' %>" alt="Banner Image"
-                    class="w-full h-full object-cover" style="border-radius: 18px;">
+                <div
+                    class="banner-overlay absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 duration-300 transition-bg-opacity cursor-pointer text-center group flex items-center justify-center">
+                    <i class="fas fa-pencil-alt text-white opacity-0 group-hover:opacity-100 transition-all"></i>
+                </div>
+
+
+                <img id="bannerImage" src="" alt="Banner Image" class="w-full h-full object-cover"
+                    style="border-radius: 18px;">
             </div>
 
             <div class="flex flex-col items-center mb-4 -mt-10">
                 <!-- Profile Picture with Overlay -->
                 <div class="relative">
                     <!-- Overlay for editing profile picture -->
-                    <div
-                        class="overlay absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 group z-30 duration-300 transition-all cursor-pointer rounded-full flex items-center justify-center">
-                        <i class="fas fa-pencil text-white"></i>
+                    <div id=""
+                        class="overlay absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 group z-1000 duration-300 transition-all cursor-pointer rounded-full flex items-center justify-center">
+                        <i class="fas fa-pencil text-white opacity-0 group-hover:opacity-100 transition-opacity"></i>
                     </div>
 
-                    <img src="<%= user.profilePicture || '/15.png' %>" alt="Profile Picture"
-                        class="w-20 h-20 border-2 border-white rounded-full shadow-lg" id="profilePicture">
+
+                    <img src="https://static.vecteezy.com/system/resources/thumbnails/002/534/006/small/social-media-chatting-online-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg"
+                        alt="Profile Picture" class="w-20 h-20 border-2 border-white rounded-full shadow-lg"
+                        id="profilePicture">
 
                 </div>
                 <h1 class="text-2xl font-bold mt-4">
@@ -117,10 +127,11 @@
             <p class="underline">Note: work in progress</p>
             <div class="flex justify-center mb-4">
                 <!-- Dropzone for uploading image -->
-                <form action="/file-upload" id="dropzone"
-                    class="dropzone  w-60 h-20 text-white flex items-center justify-center">
-                    <i class="fas fa-upload text-4xl"></i>
-                </form>
+
+
+                <div id="dropzone">
+
+                </div>
 
             </div>
 
@@ -130,36 +141,36 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div id="bannerModal" class="modal">
+        <div class="modal-content bg-gray-900 rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4 text-white">Change Banner Image</h2>
+            <p class="underline">Note: work in progress</p>
+            <div class="flex justify-center mb-4">
+                <!-- Dropzone for uploading image -->
+
+
+                <div id="bannerDropzone">
+
+                </div>
+
+            </div>
+
+            <div class="flex justify-center mt-4">
+                <button id="saveBannerButton" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+            </div>
+        </div>
+    </div>
+
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
 
     <script src="/pfpHandler.js"></script>
+    <script src="/user.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const modal = document.getElementById('modal');
-            const modalContent = modal.querySelector('.modal-content');
-            const overlay = document.querySelector('.overlay');
-
-            // Function to open the modal
-            function openModal() {
-                modal.style.display = 'block';
-            }
-
-            function closeModal() {
-                modal.style.display = 'none';
-            }
-            overlay.addEventListener('click', openModal);
-
-            modal.addEventListener('click', (e) => {
-                if (e.target != modalContent) {
-                    modal.style.display = 'none';
-                }
-            })
-
-        });
-    </script>
+    <script src="/modalHandle.js"></script>
+    <script src="/profileLoad.js"></script>
 
 </body>
 

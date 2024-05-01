@@ -158,6 +158,11 @@
                     return;
                 }
 
+                if (document.getElementById('email').value.trim() === '') {
+                    errorMessage.textContent = 'Username cannot be empty.';
+                    return;
+                }
+
                 if (password.length < 7 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
                     errorMessage.textContent = 'Password is not secure enough.';
                     return;
