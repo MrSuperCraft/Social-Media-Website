@@ -5,6 +5,8 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const multer = require('multer'); // Import Multer
+const moment = require('moment');
+
 
 
 app.use(express.urlencoded({ extended: false }));
@@ -40,41 +42,16 @@ app.use(session({
 
 
 /* Middlewares */
-// Middleware to fetch user data based on session ID or username
-/* Middlewares */
-// Middleware to fetch user data based on session ID or username
-const fetchUserData = (req, res, next) => {
-    const username = req.session.username;
-    const user_id = req.session.user_id;
 
-    let query;
-    let params;
-    if (user_id) {
-        query = "SELECT * FROM users WHERE user_id = ?";
-        params = [user_id];
-    } else if (username) {
-        query = "SELECT * FROM users WHERE username = ?";
-        params = [username];
-    } else {
-        console.error('User ID and username not found in session');
-        return res.status(400).json({ error: 'User data retrieval failed' });
+// Create a middleware (isAuth) to check if a user exists in a session. If not, redirect to /login. This should apply to all routes that require a user to be logged in.
+
+const isAuth = (req, res, next) => {
+    if (!req.session || !req.session.user) {
+        return res.redirect('/login');
     }
-
-    db.get(query, params, (err, row) => {
-        if (err) {
-            console.error("Database Error:", err);
-            return res.status(500).json({ error: "Server error" });
-        }
-        if (!row) {
-            console.error('User data not found for user ID:', user_id, 'or username:', username);
-            return res.status(404).json({ error: 'User data not found' });
-        }
-
-        // Attach user data to the request object for further use
-        req.userData = row;
-        next(); // Move to the next middleware or route handler
-    });
+    next();
 };
+
 
 
 
@@ -118,22 +95,22 @@ app.get('/login', (req, res) => {
 })
 
 
-app.get('/settings', (req, res) => {
-    const { username, user_id } = req.session;
+app.get('/settings', isAuth, (req, res) => {
+    const { user_id } = req.session;
+    const { username } = req.session.user; // Extract username from session data
+
 
     // Render the settings page with user data
     res.render('settings', { username, user_id });
 
-    console.log(req.session);
 });
 
-app.get('/feed', (req, res) => {
+app.get('/feed', isAuth, (req, res) => {
     // Check if the user is logged in
     if (!req.session || !req.session.user) {
         return res.redirect('/login'); // Redirect to login if user is not logged in
     }
 
-    console.log(req.session)
     const { username } = req.session.user; // Extract username from session data
 
 
@@ -160,6 +137,10 @@ app.get('/signup', (req, res) => {
     res.render("signup");
 });
 
+
+app.get('/add-post', isAuth, (req, res) => {
+    res.render("add-post");
+});
 
 app.post('/sign-user-up', async (req, res) => {
     const { username, email, password } = req.body;
@@ -192,8 +173,8 @@ app.post('/sign-user-up', async (req, res) => {
             console.log(`A new user has been signed up with ID ${this.lastID}`);
 
             // Set the session user, user ID, and profile picture
-            req.session.user = { username: user.username };
-            req.session.user_id = { user_id: user.user_id };
+            req.session.username = user.username;
+            req.session.user_id = user.user_id;
             req.session.profilePicture = user.profile_picture;
 
             // Send a success response and redirect to /feed
@@ -240,9 +221,10 @@ app.post('/sign-user-in', async (req, res) => {
         if (passwordMatch) {
             // Passwords match, set the session user and profile picture
             req.session.user = { username: user.username };
-            req.session.user_id = { user_id: user.user_id };
+            req.session.user_id = user.user_id;
             req.session.profilePicture = user.profile_picture;
 
+            console.log(req.session);
             // Send a success response
             res.redirect('/feed');
         } else {
@@ -308,8 +290,33 @@ app.post('/check-username', (req, res) => {
     });
 });
 
+// Route to check if an email is available
 
-app.get('/:username', (req, res) => {
+app.post('/check-email', (req, res) => {
+    const { email } = req.body;
+
+    if (!email || typeof email !== 'string') {
+        return res.status(400).json({ error: 'Invalid email provided.' });
+    }
+
+    // Check if email exists in the database
+    db.get('SELECT email FROM users WHERE email = ?', [email], (err, row) => {
+        if (err) {
+            return res.status(500).json({ error: 'Internal server error.' });
+        }
+
+        if (row) {
+            // Email is taken
+            return res.json({ available: false });
+        } else {
+            // Email is available
+            return res.json({ available: true });
+        }
+    });
+});
+
+
+app.get('/:username', isAuth, (req, res) => {
     const username = req.params.username;
 
     // Query the database to fetch user data
@@ -344,6 +351,21 @@ app.get('/api/users/:username', (req, res) => {
         res.json({ userId: row.user_id }); // Use row.user_id instead of row.userId
     });
 });
+
+app.get('/api/users/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+    const query = `SELECT username FROM users WHERE user_id = ?`;
+    db.get(query, [user_id], (err, row) => {
+        if (err) {
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (!row) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(row.username); // Use row.user_id instead of row.userId
+    });
+});
+
 
 
 // Multer storage setup
@@ -453,8 +475,8 @@ app.get('/api/user/banner/:id', async (req, res) => {
 
 
 
-app.get('/api/user/settings', fetchUserData, (req, res) => {
-    const user_id = req.userData.user_id; // Access user ID from req object
+app.get('/api/user/settings', (req, res) => {
+    const user_id = req.session.user_id;
 
     const query = "SELECT * FROM users WHERE user_id = ?";
     db.get(query, [user_id], (err, row) => {
@@ -471,6 +493,40 @@ app.get('/api/user/settings', fetchUserData, (req, res) => {
     });
 });
 
+// API endpoint to update user bio
+app.post('/api/user/bio/:user_id', (req, res) => {
+    const { user_id, bio } = req.body;
+
+    // Update the user's bio in the database (pseudo code)
+    db.run('UPDATE users SET bio = ? WHERE user_id = ?', [bio, user_id], (err, result) => {
+        if (err) {
+            console.error('Error updating bio:', err);
+            return res.status(500).json({ error: 'Server error' });
+        }
+        // Send success response
+        res.json({ success: true });
+    });
+});
+
+// create a route for the post request to /api/user/bio/:user_id which will get the user's bio from the database
+
+app.get('/api/user/bio/:user_id', (req, res) => {
+    const { user_id } = req.session.user_id;
+
+    const query = "SELECT bio FROM users WHERE user_id = ?";
+    db.get(query, [user_id], (err, row) => {
+        if (err) {
+            console.error("Database Error: ", err);
+            return res.status(500).json({ error: "Server error" });
+        }
+        if (!row) {
+            console.error('User data not found for user ID:', user_id);
+            return res.status(404).json({ error: 'User data not found' });
+        }
+
+        res.json({ bio: row.bio });
+    });
+});
 
 
 
@@ -479,10 +535,144 @@ app.get('/api/user/settings', fetchUserData, (req, res) => {
 
 
 
+// Create a route for the post request to /api/add-post/:user_id which will add a new post to the database.
+// This should add the title, content, image, tags, user_id, generate a post id, get post_image  and insert it into the database.
+// It should also generate the created_at value to appear as the time the post was created. 
+
+app.post('/api/add-post/:user_id', upload.single('image'), (req, res) => {
+    const { user_id } = req.params;
+    const { title, content, tags } = req.body;
+    let imageBlob; // Initialize imageBlob variable
+
+    if (req.file) {
+        // If file exists, assign the buffer to imageBlob
+        imageBlob = req.file.buffer;
+    }
+    // Format date and time using moment.js
+    const created_at = moment().format('MM.DD.YY HH:mm:ss');
+
+
+    // Fetch the username of the original poster using user_id
+    const getUsernameQuery = 'SELECT username FROM users WHERE user_id = ?';
+    db.get(getUsernameQuery, [user_id], (err, row) => {
+        if (err) {
+            console.error('Error fetching username:', err);
+            return res.status(500).json({ error: 'Server error' });
+        }
+        if (!row) {
+            console.error('User not found with user_id:', user_id);
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const username = row.username;
+
+        const query = `INSERT INTO posts (title, content, post_image, tags, user_id, username, created_at) VALUES (?,?,?,?,?,?,?)`;
+        db.run(query, [title, content, imageBlob, tags, user_id, username, created_at], (err, result) => {
+            if (err) {
+                console.error('Error adding post:', err);
+                return res.status(500).json({ error: 'Server error' });
+            }
+            // Send success response
+            res.json({ success: true });
+        });
+    });
+});
 
 
 
 
+
+
+app.get('/api/posts', async (req, res) => {
+    try {
+        const page = req.query.page || 1;
+        const postsPerPage = 10; // Number of posts to display per page
+        const offset = (page - 1) * postsPerPage;
+
+        // Fetch posts from database with offset and limit, excluding post_image column
+        const query = 'SELECT title, post_id, username, content, created_at, tags FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?';
+        db.all(query, [postsPerPage, offset], (err, rows) => {
+            if (err) {
+                console.error('Error fetching posts:', err);
+                return res.status(500).json({ error: 'Server error' });
+            }
+            return res.json(rows);
+        });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+
+
+
+// Route to handle form submission of new settings.
+app.post('/update-user', async (req, res) => {
+    const { user_id, username, email, password, bio } = req.body;
+
+    // Retrieve user data from database
+    db.get('SELECT * FROM users WHERE user_id = ?', [user_id], async (err, row) => {
+        if (err) {
+            console.error('Error retrieving user data:', err);
+            return res.status(500).json({ message: 'Error updating user data' });
+        }
+
+        if (!row) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Compare hashed password with user's stored password
+        const passwordMatch = await bcrypt.compare(password, row.password);
+
+        if (!passwordMatch) {
+            return res.status(400).json({ message: 'Passwords do not match' });
+        }
+
+        // Update user data in the database
+        db.run('UPDATE users SET username = ?, email = ?, bio = ? WHERE user_id = ?', [username, email, bio, user_id], (err) => {
+            if (err) {
+                console.error('Error updating user data:', err);
+                return res.status(500).json({ message: 'Error updating user data' });
+            }
+            res.status(200).json({ message: 'User data updated successfully' });
+        });
+    });
+});
+
+
+
+
+
+// Route to fetch posts for a user
+app.get('/api/posts/:username', (req, res) => {
+    const { username } = req.params;
+    const page = req.query.page || 1;
+    const offset = (page - 1) * 10; // Assuming 10 posts per page
+
+    db.all(`SELECT * FROM posts WHERE username = ? LIMIT 10 OFFSET ?`, [username, offset], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: 'Error fetching posts' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+// Route to fetch comments for a user
+app.get('/api/comments/:username', (req, res) => {
+    const { username } = req.params;
+    const page = req.query.page || 1;
+    const offset = (page - 1) * 10; // Assuming 10 comments per page
+
+    db.all(`SELECT * FROM comments WHERE username = ? LIMIT 10 OFFSET ?`, [username, offset], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: 'Error fetching comments' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
 
 
 

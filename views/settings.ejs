@@ -12,57 +12,105 @@
 
 <body class="bg-gray-900 text-white">
 
+    <nav class="bg-gray-800 p-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <span class="text-xl font-bold text-white ml-2"><i class="fa-solid fa-hashtag"></i> Similar
+                People</span>
+        </div>
+        <div class="flex items-center">
+            <a href="/<%= username %>" class="text-white hover:text-indigo-500 transition-all duration-300 mr-4">
+                <i class="fas fa-user-circle mr-1"></i> View Profile
+            </a>
+
+            <a href="/feed" class="text-white hover:text-indigo-500 transition-all duration-300">
+                Back to Feed <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </nav>
     <div class="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+
         <div class="max-w-md w-full space-y-8">
             <div>
                 <h2 class="mt-6 text-center text-3xl font-extrabold">User Settings</h2>
             </div>
-            <form id="settingsForm" class="mt-8 space-y-6" action="#" method="POST">
+            <form id="settingsForm" class="mt-8 space-y-6" action="/update-user" method="POST">
                 <!-- Username -->
+                <label for="username" class="block text-sm font-medium">Username</label>
                 <div>
-                    <label for="username" class="block text-sm font-medium">Username</label>
-                    <input type="text" id="username" name="username" autocomplete="off"
+                    <input type="text" id="username" name="username" autocomplete="false" hidden="true"
                         class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500"
                         placeholder="Enter your username">
                 </div>
                 <!-- Email -->
+                <label for="email" class="block text-sm font-medium">Email</label>
                 <div>
-                    <label for="email" class="block text-sm font-medium">Email</label>
-                    <input type="email" id="email" name="email" autocomplete="off"
+                    <input type="email" id="email" name="email" autocomplete="false" hidden="true"
                         class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500"
                         placeholder="Enter your email">
                 </div>
                 <!-- Password -->
+                <label for="password" class="block text-sm font-medium">Password</label>
                 <div>
-                    <label for="password" class="block text-sm font-medium">Password</label>
-                    <input type="password" id="password" name="password" autocomplete="off"
+                    <input type="password" id="password" name="password" autocomplete="false" hidden="true"
                         class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500"
-                        placeholder="Enter your password">
+                        placeholder="Enter your password to confirm changes">
                 </div>
+
+                <!-- Bio -->
+                <div class="w-full max-w-md mx-auto mt-8">
+                    <label for="bio" class="block text-gray-300">Bio (Max 30 characters)</label>
+                    <input id="bio" type="text" maxlength="30"
+                        class="block w-full px-4 py-2 mt-1 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:border-gray-400 text-gray-300 transition duration-300 ease-in-out">
+                    <p class="mt-2 text-xs text-gray-400">Characters remaining: <span id="charCount">30</span></p>
+                    <p class="text-xs text-gray-400" id="bioStatus"></p>
+                </div>
+
+
+
                 <!-- Profile Picture -->
+
                 <div>
                     <label for="profile-picture" class="block text-sm font-medium">Profile Picture</label>
-                    <input type="file" id="profile-picture" name="profile-picture"
-                        class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500">
+                    <div class="flex items-center justify-center w-full">
+                        <label for="dropzone-file"
+                            class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-700 dark:hover:bg-gray-600 dark:bg-gray-800 hover:bg-gray-800 dark:border-gray-500 dark:hover:border-gray-400">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg class="w-8 h-8 mb-4 text-gray-400 dark:text-gray-300" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-400 dark:text-gray-300"><span
+                                        class="font-semibold">Click to upload</span> or drag and drop</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-300">SVG, PNG, JPG, or GIF</p>
+                            </div>
+                            <input id="dropzone-file" type="file" class="hidden" />
+                        </label>
+                    </div>
+
                 </div>
                 <!-- Banner Image -->
                 <div>
                     <label for="banner-image" class="block text-sm font-medium">Banner Image</label>
-                    <input type="file" id="banner-image" name="banner-image"
-                        class="mt-1 p-2 block w-full rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500">
-                </div>
-                <!-- Follow List -->
-                <div>
-                    <label for="follow-list" class="block text-sm font-medium">Follow List</label>
-                    <ul id="follow-list" class="mt-1 bg-gray-800 p-2 rounded-md overflow-y-auto max-h-40">
-                        <!-- Sample follow item -->
-                        <li class="flex justify-between items-center mb-2">
-                            <span class="truncate">Username 1</span>
-                            <button type="button"
-                                class="px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none">Follow</button>
-                        </li>
-                        <!-- Add more follow items dynamically -->
-                    </ul>
+                    <div class="flex items-center justify-center w-full">
+                        <label for="dropzone-file"
+                            class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-700 dark:hover:bg-gray-600 dark:bg-gray-800 hover:bg-gray-800 dark:border-gray-500 dark:hover:border-gray-400">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg class="w-8 h-8 mb-4 text-gray-400 dark:text-gray-300" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-400 dark:text-gray-300"><span
+                                        class="font-semibold">Click to upload</span> or drag and drop</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-300">SVG, PNG, JPG, or GIF</p>
+                            </div>
+                            <input id="dropzone-file" type="file" class="hidden" />
+                        </label>
+                    </div>
+
                 </div>
                 <!-- Submit Button -->
                 <div>
@@ -74,32 +122,11 @@
         </div>
     </div>
 
+    <script src="/settings.js"></script>
+    <script src="/validateForm.js"></script>
+    <script src="/message.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const res = await fetch('/api/user/settings'); // Assuming this endpoint returns user data
-                if (!res.ok) {
-                    throw new Error('Failed to fetch user data');
-                }
 
-                const userData = await res.json();
-                populateForm(userData);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        });
-
-        function populateForm(userData) {
-            const form = document.getElementById('settingsForm');
-            if (!form) return;
-
-            form.querySelector('#username').value = userData.username;
-            form.querySelector('#email').value = userData.email;
-            // Populate other fields as needed
-        }
-
-    </script>
 </body>
 
 </html>

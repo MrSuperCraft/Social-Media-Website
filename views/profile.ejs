@@ -13,56 +13,54 @@
     <!-- Font Awesome CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        /* Add styles for the modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 200;
+        .card {
+            background-color: #4a5568;
+            /* Card background color */
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
         }
 
-        .modal-content {
-            font-size: 25px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            width: 30%;
-            height: 90%;
+        .card:hover {
+            transform: translateY(-5px);
         }
 
-        /* Styles for the dropzone */
-        .dropzone {
-            border-radius: 10px;
-            border: 2px dashed #666666;
-            background: #666666;
-            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #e2e8f0;
+            /* Light text color */
+            margin-bottom: 0.5rem;
         }
 
-        /* Styles for the upload icon */
-        .dropzone i {
-            transition: color 0.3s ease-in-out;
+        .card-content {
+            color: #cbd5e0;
+            /* Lighter text color */
         }
 
-        /* Styles for hover effect */
-        .dropzone:hover {
-            background-color: #333333;
-            /* Darker background color on hover */
-            border-color: #333333;
-            /* Darker border color on hover */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
-        /* Styles for hover effect on icon */
-        .dropzone:hover i {
-            color: #ffffff;
-            /* Change icon color to white on hover */
+        .filter-btn {
+            background-color: #4a5568;
+            /* Darker button color */
+            color: #e2e8f0;
+            /* Light text color */
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background-color: #cbd5e0;
+            /* Button color on hover */
         }
     </style>
 </head>
@@ -76,12 +74,6 @@
     <main class="max-w-5xl mx-auto transition-all duration-300">
         <section class="banner relative mt-8">
             <div class="banner-content bg-white h-48 relative" style="border-radius: 20px;">
-                <div
-                    class="banner-overlay absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 duration-300 transition-bg-opacity cursor-pointer text-center group flex items-center justify-center">
-                    <i class="fas fa-pencil-alt text-white opacity-0 group-hover:opacity-100 transition-all"></i>
-                </div>
-
-
                 <img id="bannerImage" src="" alt="Banner Image" class="w-full h-full object-cover"
                     style="border-radius: 18px;">
             </div>
@@ -89,12 +81,6 @@
             <div class="flex flex-col items-center mb-4 -mt-10">
                 <!-- Profile Picture with Overlay -->
                 <div class="relative">
-                    <!-- Overlay for editing profile picture -->
-                    <div id=""
-                        class="overlay absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 group z-1000 duration-300 transition-all cursor-pointer rounded-full flex items-center justify-center">
-                        <i class="fas fa-pencil text-white opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                    </div>
-
 
                     <img src="https://static.vecteezy.com/system/resources/thumbnails/002/534/006/small/social-media-chatting-online-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg"
                         alt="Profile Picture" class="w-20 h-20 border-2 border-white rounded-full shadow-lg"
@@ -104,63 +90,38 @@
                 <h1 class="text-2xl font-bold mt-4">
                     <%= user.username %>
                 </h1>
-                <p class="text-gray-300 mt-2">
-                    <%= user.bio %>
-                </p>
+                <div class="relative">
+                    <div id="bioInput"
+                        class="w-64 h-16 bg-gray-800 text-white border border-gray-600 rounded-md mt-6 p-2 focus:outline-none focus:border-blue-400 resize-none"
+                        placeholder="Write your bio here...">
+                        <%= user.bio %>
+                    </div>
+                </div>
+
             </div>
 
         </section>
         <section class="activity-tabs mt-8">
-            <div class="recent-posts bg-gray-800 p-4 shadow rounded">
-                <!-- Recent forum posts content here -->
+            <h1 class="font-bold text-left text-white">User Activity</h1>
+            <div class="user-activity-posts bg-gray-800 p-4 shadow rounded relative" id="recentPostsContainer">
+                <!-- Activity Spinner for Posts -->
+                <div class="spinner">
+                    <div class="w-8 h-8 border-4 border-gray-200 rounded-full animate-spin"></div>
+                </div>
+                <!-- Recent forum posts content will load here -->
             </div>
-            <div class="recent-comments bg-gray-800 p-4 shadow rounded mt-4">
-                <!-- Recent comments content here -->
+            <div class="user-activity-comments bg-gray-800 p-4 shadow rounded mt-4 relative mb-20"
+                id="recentCommentsContainer">
+                <!-- Activity Spinner for Comments -->
+                <div class="spinner">
+                    <div class="w-8 h-8 border-4 border-gray-200 rounded-full animate-spin"></div>
+                </div>
+                <!-- Recent comments content will load here -->
             </div>
         </section>
     </main>
 
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-content bg-gray-900 rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-bold mb-4 text-white">Change Profile Picture</h2>
-            <p class="underline">Note: work in progress</p>
-            <div class="flex justify-center mb-4">
-                <!-- Dropzone for uploading image -->
 
-
-                <div id="dropzone">
-
-                </div>
-
-            </div>
-
-            <div class="flex justify-center mt-4">
-                <button id="saveImageButton" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div id="bannerModal" class="modal">
-        <div class="modal-content bg-gray-900 rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-bold mb-4 text-white">Change Banner Image</h2>
-            <p class="underline">Note: work in progress</p>
-            <div class="flex justify-center mb-4">
-                <!-- Dropzone for uploading image -->
-
-
-                <div id="bannerDropzone">
-
-                </div>
-
-            </div>
-
-            <div class="flex justify-center mt-4">
-                <button id="saveBannerButton" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
-            </div>
-        </div>
-    </div>
 
 
 
@@ -169,7 +130,6 @@
     <script src="/pfpHandler.js"></script>
     <script src="/user.js"></script>
 
-    <script src="/modalHandle.js"></script>
     <script src="/profileLoad.js"></script>
 
 </body>

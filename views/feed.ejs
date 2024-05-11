@@ -28,6 +28,7 @@
             padding: 1rem;
         }
 
+
         .popular-forums,
         .recent-posts,
         .profile-section {
@@ -37,6 +38,30 @@
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
+        .popular-forums {
+            position: sticky;
+            top: 1rem;
+            /* Adjust top position as needed */
+            z-index: 1000;
+            /* Ensure it appears above other content */
+            max-height: 436px;
+        }
+
+
+        .profile-section {
+            position: fixed;
+            top: 1rem;
+            /* Adjust this value based on your design */
+            left: calc(70% - 30px);
+            /* Adjust this value to center the profile section horizontally */
+            z-index: 1000;
+            /* Adjust z-index as needed */
+            width: 300px;
+            /* Set the width of the profile section */
+
+        }
+
 
         .card {
             background-color: #4a5568;
@@ -107,6 +132,12 @@
             line-height: 1;
             color: white;
         }
+
+        .spinner-circle {
+            border-top-color: transparent;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+        }
     </style>
 </head>
 
@@ -126,6 +157,22 @@
         <!-- Recent Posts Section -->
         <div class="recent-posts">
             <h2 class="text-lg font-bold mb-4">Recent Forum Posts</h2>
+
+            <!-- Search Bar -->
+            <div class="relative max-w-md mx-auto mb-4">
+                <div class="relative flex items-center w-full">
+                    <input type="search"
+                        class=" ml-3 peer h-12 w-full pl-12 pr-4 bg-transparent border border-gray-300 rounded-full focus:outline-none focus:border-blue-400 focus:pl-16 focus:pr-8"
+                        placeholder="Search...">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="absolute inset-y-0 left-3 my-auto h-8 w-12 border-r border-transparent stroke-gray-500 peer-focus:border-lime-300 peer-focus:stroke-lime-500"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+
             <div class="filters mb-4">
                 <button class="filter-btn hover:text-black duration-500 transition-colors">Technology</button>
                 <button class="filter-btn hover:text-black duration-500 transition-colors">Art & Design</button>
@@ -140,37 +187,55 @@
 
                 <!-- Add more tag filters as needed -->
             </div>
-            <!-- Sample Post Cards -->
-            <div class="card">
-                <h3 class="card-title">Post Title 1</h3>
-                <p class="card-content">Post content goes here. This is a sample post.</p>
-                <div class="meta mt-2">
-                    <span>Posted by Username</span>
-                    <span>2 hours ago</span>
+
+            <!-- HTML structure for posts container -->
+            <div id="postsContainer">
+            </div>
+            <div id="spinner" class="flex justify-center items-center h-20" style="display: none;">
+                <div class="flex justify-center items-center h-10">
+                    <div class="flex space-x-4 animate-spin">
+                        <div class="w-4 h-4 rounded-full bg-blue-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-blue-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-blue-500"></div>
+                    </div>
                 </div>
             </div>
-            <div class="card">
-                <h3 class="card-title">Post Title 2</h3>
-                <p class="card-content">Post content goes here. This is another sample post.</p>
-                <div class="meta mt-2">
-                    <span>Posted by Another User</span>
-                    <span>1 day ago</span>
-                </div>
-            </div>
-            <!-- Add more recent posts as needed -->
+
         </div>
 
         <!-- Profile Section -->
         <div class="profile-section text-center">
             <h2 class="text-lg font-bold mb-4">Your Profile</h2>
-            <div class="profile-info flex flex-col items-center mb-4 w-[100px] h-[100px]">
-                <img id="profilePicture" alt="Profile Image" class="rounded-full w-18 h-18 mb-2">
+            <div class="profile-info flex flex-col items-center mb-4 w-[100px] h-[100px] relative">
+                <div id="spinnerContainer"
+                    class="w-48 h-48 flex items-center justify-center absolute top-0 left-0 z-10">
+                    <svg aria-hidden="true" class="w-8 h-8 text-blue-600 animate-spin dark:text-gray-600"
+                        viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M50 4.88281C24.454 4.88281 4.88281 24.454 4.88281 50C4.88281 75.546 24.454 95.1172 50 95.1172C75.546 95.1172 95.1172 75.546 95.1172 50C95.1172 24.454 75.546 4.88281 50 4.88281ZM50 87.5C28.3674 87.5 10.4688 69.6014 10.4688 48C10.4688 26.3674 28.3674 8.46875 50 8.46875C71.6326 8.46875 89.5312 26.3674 89.5312 48C89.5312 69.6014 71.6326 87.5 50 87.5Z"
+                            fill="currentColor" />
+                    </svg>
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <img id="profilePicture" alt="Profile Image" class="rounded-full w-48 h-48 object-cover mb-2">
                 <span class="font-semibold text">
                     <%= username %>
                 </span>
             </div>
-            <a href="/<%= username %>">View Profile</a>
-            <form action="/logout" method="POST" class="mt-2">
+
+
+            <!-- View Profile Link -->
+            <a href="/<%= username %>"
+                class="mb-4 block hover:underline transition-all duration-300 hover:text-gray-300 text-lg">View
+                Profile</a>
+
+            <!-- Add Post Button -->
+            <a href="/add-post"
+                class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:border-blue-500 mt-4">Add
+                Post <i class="fas fa-plus"></i></a>
+
+            <!-- Logout Button -->
+            <form action="/logout" method="POST" class="mt-4">
                 <button type="submit"
                     class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-500 focus:outline-none focus:ring focus:border-blue-500">Logout</button>
             </form>
@@ -181,6 +246,24 @@
     <!-- scripts -->
     <script src="/user.js"></script>
     <script src="/profileLoad.js"></script>
+    <script src="/loadPosts.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const profilePicture = document.getElementById('profilePicture');
+            const spinnerContainer = document.getElementById('spinnerContainer');
+
+            profilePicture.onload = () => {
+                spinnerContainer.classList.add('hidden');
+            };
+
+            profilePicture.onerror = () => {
+                spinnerContainer.classList.add('hidden');
+                // Optionally, show an error message or handle the error case
+            };
+        });
+
+    </script>
 
 </body>
 

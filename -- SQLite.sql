@@ -1,7 +1,7 @@
 -- SQLite
 
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
@@ -12,17 +12,18 @@ CREATE TABLE users (
     join_date DATE DEFAULT CURRENT_DATE
 );
 
-CREATE TABLE posts (
+
+CREATE TABLE IF NOT EXISTS posts (
     post_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     content TEXT NOT NULL,
-    image_url TEXT,
+    post_image BLOB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     likes_count INTEGER DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE comments (
+CREATE TABLE IF NOT EXISTS comments (
     comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     post_id INTEGER NOT NULL,
@@ -33,7 +34,7 @@ CREATE TABLE comments (
     FOREIGN KEY (post_id) REFERENCES posts(post_id)
 );
 
-CREATE TABLE likes (
+CREATE TABLE IF NOT EXISTS likes (
     like_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     post_id INTEGER NOT NULL,
@@ -44,7 +45,7 @@ CREATE TABLE likes (
     FOREIGN KEY (comment_id) REFERENCES comments(comment_id)
 );
 
-CREATE TABLE follows (
+CREATE TABLE IF NOT EXISTS follows (
     follow_id INTEGER PRIMARY KEY AUTOINCREMENT,
     follower_id INTEGER NOT NULL,
     following_id INTEGER NOT NULL,
