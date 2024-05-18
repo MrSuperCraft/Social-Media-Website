@@ -1,7 +1,7 @@
 class MessageComponent {
     constructor() {
         this.container = document.createElement('div');
-        this.container.className = 'message-container fixed bottom-0 right-0 p-4 z-50 bg-gray-800 text-white';
+        this.container.className = 'message-container fixed bottom-0 right-0 p-4 z-50 bg-transparent text-white';
         this.container.classList.add('rounded-lg', 'shadow-md');
         this.container.style.maxWidth = '400px'; // Set maximum width for the container
         document.body.appendChild(this.container);

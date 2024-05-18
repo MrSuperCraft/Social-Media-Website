@@ -1,8 +1,16 @@
 document.addEventListener('DOMContentLoaded', async () => {
+
+    // Update the profile picture source with the fetched blob URL
+    const profilePicture = document.getElementById('profilePicture');
+
     try {
         const userId = await getUserIdByUsername();
         // Fetch the profile picture blob URL from the server
         const profilePictureRes = await fetch(`/api/user/pfp/${userId}`);
+        if (profilePictureRes.status == 404) {
+            profilePicture.src = 'https://static.vecteezy.com/system/resources/thumbnails/002/534/006/small/social-media-chatting-online-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg';
+        }
+
         if (!profilePictureRes.ok) {
             console.error('Error fetching profile picture');
             return;
@@ -11,8 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const profileBlobUrl = await profilePictureRes.blob();
         console.log('Profile Blob URL:', profileBlobUrl); // Log the fetched blob URL
 
-        // Update the profile picture source with the fetched blob URL
-        const profilePicture = document.getElementById('profilePicture');
         profilePicture.src = URL.createObjectURL(profileBlobUrl);
 
         // Fetch the banner image blob URL from the server
@@ -41,32 +47,6 @@ const recentCommentsContainer = document.getElementById('recentCommentsContainer
 let pageCount = 1; // Initial page number
 let offsetTimes = 0; // Initial offset value
 let loadComplete = false; // Flag to track initial load
-
-// Function to fetch and load activity data
-async function loadActivity() {
-    try {
-        const spinnerPosts = recentPostsContainer.querySelector('.spinner');
-        spinnerPosts.style.display = 'block'; // Show spinner while loading posts
-
-        // Get the username from the last split in the URL
-        const url = window.location.href;
-        const username = url.split('/').pop();
-
-
-
-        const response = await fetch(`/api/posts/${username}?page=${pageCount}&offset=${offsetTimes}`);
-        const data = await response.json();
-        console.log(data);
-
-        handlePostData(data);
-    } catch (error) {
-        console.error('Error loading activity:', error);
-    } finally {
-        const spinnerPosts = recentPostsContainer.querySelector('.spinner');
-        spinnerPosts.style.display = 'none'; // Hide spinner after loading posts
-    }
-}
-
 
 // Function to handle post data
 function handlePostData(data) {
@@ -103,13 +83,13 @@ function createPostCard(post) {
             ${renderTags(post.tags)} <!-- Render tags -->
             <div class="meta mt-2">
                 <span>Posted by ${post.username}</span>
-                <span>at ${formatTimeAgo(post.created_at)}</span>
+                <span>at ${post.created_at}</span>
             </div>
         </a>
         <div class="likes-container">
-            <span class="likes-count">${post.likes || 0} </span>
+            <span class="likes-count mr-1">${post.likes || 0}  </span>
             <button class="like-button ${isUserLiked(post.post_id) ? 'liked' : ''}">
-                <i class="fas fa-heart"></i>
+                 <i class="fas fa-heart"></i>
             </button>
         </div>
     `;
@@ -119,9 +99,8 @@ function createPostCard(post) {
     likesContainer.style.position = 'absolute';
     likesContainer.style.bottom = '0';
     likesContainer.style.right = '0';
-    // set the margin from the corner to be 5 px from the corner
-    likesContainer.style.margin = '5px 5px 0 0';
-    likesContainer.style.display = 'flex'; // Ensure flex display for positioning
+    likesContainer.style.margin = '0 8px 5px 0'; // Margin from the corner
+    likesContainer.style.display = 'flex'; // Flex display for positioning
 
     // Add event listener for like button click
     const likeButton = card.querySelector('.like-button');
@@ -130,7 +109,7 @@ function createPostCard(post) {
     return card;
 }
 
-// Function to show no content message (similar to posts)
+// Function to show no content message
 function showNoContentMessage() {
     const emptyMessage = document.createElement('div');
     emptyMessage.className = 'empty-message text-gray-500 text-center text-lg font-medium mt-5';
@@ -145,9 +124,6 @@ function showNoContentMessage() {
     recentPostsContainer.appendChild(noContentImage);
 }
 
-// Event listener for scrolling
-window.addEventListener('scroll', handleScroll);
-
 // Function to handle scrolling and load more activity
 function handleScroll() {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
@@ -155,8 +131,6 @@ function handleScroll() {
         loadActivity(); // Load more activity when reaching the bottom with a slight offset
     }
 }
-
-
 
 // Function to render tags
 function renderTags(tags) {
@@ -176,21 +150,106 @@ function renderTags(tags) {
     return `<div class="tags mt-2">${tagsHtml}</div>`;
 }
 
-// Function to format time ago (you can replace this with your implementation)
-function formatTimeAgo(createdAt) {
-    return createdAt; // Sample format
+// Function to check if the user has already liked the post
+function isUserLiked(postId) {
+    // Implement your logic to check if the user has liked the post
+    // Return true if the user has liked the post, otherwise false
+    return false; // Placeholder, replace with your implementation
 }
 
-// Function to truncate text
+// Function to handle like button click
+function handleLikeClick(postId) {
+    if (isUserLiked(postId)) {
+        // User has already liked the post, do nothing
+        return;
+    }
+
+    // User has not liked the post, update the like count and mark as liked
+    // Make API call to update the like count in the database
+    // Update the UI to reflect the new like count and change the button style
+    const likesCountElement = document.querySelector(`.likes-count[data-post-id="${postId}"]`);
+    const likeButton = document.querySelector(`.like-button[data-post-id="${postId}"]`);
+
+    const newLikesCount = parseInt(likesCountElement.innerText) + 1;
+    likesCountElement.innerText = newLikesCount;
+    likeButton.classList.add('liked');
+
+    // Make API call to update the like count in the database
+    // Replace the following code with your implementation
+    fetch(`/api/posts/${postId}/like`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ postId }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the server
+            // You can update the UI or perform any other actions based on the response
+        })
+        .catch(error => {
+            // Handle any errors that occur during the API call
+            console.error('Error liking post:', error);
+        });
+}
+
+
+async function loadActivity(username) {
+    try {
+        const spinnerPosts = recentPostsContainer.querySelector('.spinner');
+        spinnerPosts.style.display = 'block'; // Show spinner while loading posts
+
+
+        // Fetch posts
+        const postsResponse = await fetch(`/api/posts/${username}?page=${pageCount}&offset=${offsetTimes}`);
+        if (!postsResponse.ok) {
+            throw new Error('Failed to fetch posts');
+        }
+        const postData = await postsResponse.json();
+        console.log('Posts:', postData);
+
+        // Fetch comments
+        // const commentsResponse = await fetch(`/api/comments?page=${pageCount}&offset=${offsetTimes}`);
+        // if (!commentsResponse.ok) {
+        //     throw new Error('Failed to fetch comments');
+        // }
+        // const commentsData = await commentsResponse.json();
+        // console.log('Comments:', commentsData);
+
+        // Handle post and comment data
+        handlePostData(postData);
+        // handleCommentData(commentsData);
+    } catch (error) {
+        console.error('Error loading activity:', error);
+    } finally {
+        const spinnerPosts = recentPostsContainer.querySelector('.spinner');
+        spinnerPosts.style.display = 'none'; // Hide spinner after loading posts
+    }
+}
+
+
+// Example usage of loadActivity function
+document.addEventListener('DOMContentLoaded', async () => {
+
+    // get the username from the URL for the template localhost:3000/username. window.location.pathname
+    const username = window.location.pathname.split('/')[1];
+    console.log('Username:', username);
+
+    // Load initial activity
+    await loadActivity(username);
+
+    // Add scroll event listener to load more activity
+    window.addEventListener('scroll', handleScroll);
+});
+
+// Function to truncate text to a specified maximum length
 function truncateText(text, maxLength = 150) {
     return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 }
 
 
-// Initial load of activity
-loadActivity();
-
-
+// Function to get Font Awesome icon classes for different tags
 function getIconForTag(tag) {
     switch (tag.toLowerCase()) {
         case 'technology':
@@ -213,66 +272,7 @@ function getIconForTag(tag) {
             return 'fa-book-open';
         case 'movies & tv':
             return 'fa-tv';
+        default:
+            return 'fa-question-circle'; // Default icon if tag is not recognized
     }
-}
-
-
-// Function to format time ago (you can replace this with your implementation)
-function formatTimeAgo(createdAt) {
-    return createdAt; // Sample format
-}
-
-// Function to truncate text
-function truncateText(text, maxLength = 150) {
-    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
-}
-
-
-
-
-
-// Function to check if the user has already liked the post
-function isUserLiked(postId) {
-    // Implement your logic to check if the user has liked the post
-    // You can store liked post IDs in local storage or a database
-    // Return true if the user has liked the post, otherwise false
-    return false; // Placeholder, replace with your implementation
-}
-
-// Function to handle like button click
-function handleLikeClick(postId) {
-    if (isUserLiked(postId)) {
-        // User has already liked the post, do nothing
-        return;
-    }
-
-    // User has not liked the post, update the like count and mark as liked
-    // You can make an API call to update the like count in the database
-    // Update the UI to reflect the new like count and change the button style
-    const likesCountElement = document.querySelector(`.likes-count[data-post-id="${postId}"]`);
-    const likeButton = document.querySelector(`.like-button[data-post-id="${postId}"]`);
-
-    const newLikesCount = parseInt(likesCountElement.innerText) + 1;
-    likesCountElement.innerText = newLikesCount;
-    likeButton.classList.add('liked');
-
-    // Make API call to update the like count in the database
-    // You can use fetch API or any other HTTP library to make the request
-    // Replace the following code with your implementation
-    fetch(`/api/posts/${postId}/like`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ postId }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            // Handle the response from the server
-            // You can update the UI or perform any other actions based on the response
-        })
-        .catch(error => {
-            // Handle any errors that occur during the API call
-            console.error('Error liking post:', error);
-        });
 }

@@ -57,4 +57,56 @@ CREATE TABLE IF NOT EXISTS follows (
 
 
 
-SELECT * FROM users;
+
+-- Create a trigger to update the follow_count column when a new follow is inserted
+CREATE TRIGGER IF NOT EXISTS update_follow_count_after_insert
+AFTER INSERT ON follows
+FOR EACH ROW
+BEGIN
+    UPDATE users
+    SET follow_count = (
+        SELECT COUNT(*)
+        FROM follows
+        WHERE follows.follower_id = NEW.follower_id
+    )
+    WHERE user_id = NEW.follower_id;
+END;
+
+
+-- Create a trigger to update the post_count column when a new post is inserted
+CREATE TRIGGER IF NOT EXISTS update_post_count_after_insert
+AFTER INSERT ON posts
+FOR EACH ROW
+BEGIN
+    UPDATE users
+    SET post_count = post_count + 1
+    WHERE user_id = NEW.user_id;
+END;
+
+-- Create a trigger to update the post_count column when a post is deleted
+CREATE TRIGGER IF NOT EXISTS update_post_count_after_delete
+AFTER DELETE ON posts
+FOR EACH ROW
+BEGIN
+    UPDATE users
+    SET post_count = post_count - 1
+    WHERE user_id = OLD.user_id;
+END;
+
+
+
+-- Create a trigger to update the comment_count column when a new comment is inserted
+CREATE TRIGGER IF NOT EXISTS update_comment_count_after_insert
+AFTER INSERT ON comments
+FOR EACH ROW
+BEGIN
+    UPDATE users
+    SET comment_count = (
+        SELECT COUNT(*)
+        FROM comments
+        WHERE comments.user_id = NEW.user_id
+    )
+    WHERE user_id = NEW.user_id;
+END;
+
+

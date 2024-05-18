@@ -173,9 +173,11 @@ app.post('/sign-user-up', async (req, res) => {
             console.log(`A new user has been signed up with ID ${this.lastID}`);
 
             // Set the session user, user ID, and profile picture
-            req.session.username = user.username;
-            req.session.user_id = user.user_id;
-            req.session.profilePicture = user.profile_picture;
+            req.session.user = username;
+            req.session.user_id = this.lastID;
+            req.session.profilePicture = null;
+            req.session.email = email;
+
 
             // Send a success response and redirect to /feed
             res.status(200).redirect('/feed');
@@ -223,6 +225,7 @@ app.post('/sign-user-in', async (req, res) => {
             req.session.user = { username: user.username };
             req.session.user_id = user.user_id;
             req.session.profilePicture = user.profile_picture;
+            req.session.email = user.email;
 
             console.log(req.session);
             // Send a success response
@@ -420,6 +423,7 @@ app.get('/api/session-data', (req, res) => {
     const sessionData = {
         username: req.session.user.username,
         user_id: req.session.user_id,
+        email: req.session.email,
         profilePicture: req.session.profilePicture, // Assuming profile picture is stored in the session
         // Add other session data you want to send to the frontend
     };
@@ -652,12 +656,13 @@ app.get('/api/posts/:username', (req, res) => {
 
     db.all(`SELECT * FROM posts WHERE username = ? LIMIT 10 OFFSET ?`, [username, offset], (err, rows) => {
         if (err) {
-            res.status(500).json({ error: 'Error fetching posts' });
-        } else {
-            res.json(rows);
+            return res.status(500).json({ error: 'Error fetching posts' });
         }
+
+        res.json(rows);
     });
 });
+
 
 // Route to fetch comments for a user
 app.get('/api/comments/:username', (req, res) => {
@@ -676,6 +681,165 @@ app.get('/api/comments/:username', (req, res) => {
 
 
 
+
+
+
+// Search bar implementation
+
+
+// Endpoint for autocomplete suggestions
+app.get('/search/autocomplete', async (req, res) => {
+    const query = req.query.query || '';
+
+    let sql = "SELECT title FROM posts WHERE title LIKE ?";
+    let params = [`${query}%`]; // Match titles starting with the input string
+
+    try {
+        const rows = await new Promise((resolve, reject) => {
+            db.all(sql, params, (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+
+        // Send the autocomplete suggestions as JSON
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+// Endpoint to render search results page
+app.get('/search/results', isAuth, async (req, res) => {
+    const query = req.query.query || '';
+    const tags = req.query.tags ? req.query.tags.split(',') : [];
+
+    let sql = "SELECT * FROM posts WHERE title LIKE ?";
+    let params = [`%${query}%`];
+
+    if (tags.length > 0) {
+        // Build the tag conditions dynamically
+        const tagConditions = tags.map(tag => "tags LIKE ?");
+        sql += ` AND (post_id IN (SELECT post_id FROM posts WHERE ${tagConditions.join(' OR ')}))`;
+        params = [...params, ...tags.map(tag => `%${tag}%`)];
+    }
+
+    try {
+        const rows = await new Promise((resolve, reject) => {
+            db.all(sql, params, (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+
+        // Render the HTML page with search results
+        res.render('search', { posts: rows });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+// Endpoint to get the search results from the API
+app.get('/api/search/results', async (req, res) => {
+    const query = req.query.query || '';
+    const tags = req.query.tags ? req.query.tags.split(',') : [];
+
+    let sql = "SELECT * FROM posts WHERE (title LIKE ? OR content LIKE ?)";
+    let params = [`%${query}%`, `%${query}%`];
+
+    if (tags.length > 0) {
+        // Build the tag conditions dynamically
+        const tagConditions = tags.map(tag => "tags LIKE ?");
+        sql += ` AND (${tagConditions.join(' OR ')})`;
+        params = [...params, ...tags.map(tag => `%${tag}%`)];
+    }
+
+    try {
+        const rows = await new Promise((resolve, reject) => {
+            db.all(sql, params, (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+
+        // Send the search results as JSON
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+
+// Update user settings route
+app.post('/api/update-user', upload.fields([{ name: 'profilePicture', maxCount: 1 }, { name: 'bannerImage', maxCount: 1 }]), async (req, res) => {
+    const { user_id, username, bio, email, password } = req.body;
+
+
+    // Check if username or email are already taken
+    const userExistsQuery = 'SELECT * FROM users WHERE user_id = ?';
+    db.get(userExistsQuery, [user_id], (err, row) => {
+
+
+        if (err) {
+            console.error('Error checking if user exists:', err);
+            return res.status(500).json({ error: 'Error updating user settings.' });
+        }
+        if (!row) {
+            // User with the given user_id doesn't exist
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        // Proceed with updating user settings for the user with the given user_id
+
+        // Create user object with updated settings
+        const updatedUser = {
+            username,
+            email,
+            password, // Note: You should handle password hashing and encryption here
+            bio
+        };
+
+        // Add profile picture if uploaded
+        if (req.files['profilePicture']) {
+            updatedUser.profile_picture = req.files['profilePicture'][0].buffer;
+        }
+
+        // Add banner image if uploaded
+        if (req.files['bannerImage']) {
+            updatedUser.banner_image = req.files['bannerImage'][0].buffer;
+        }
+
+        // Update user settings in the database
+        const updateUserQuery = 'UPDATE users SET username = ?, email = ?, bio = ?, profile_picture = ?, banner_image = ? WHERE user_id = ?';
+        const params = [updatedUser.username, updatedUser.email, updatedUser.bio, updatedUser.profile_picture, updatedUser.banner_image, user_id];
+        db.run(updateUserQuery, params, function (err) {
+            if (err) {
+                console.error('Error updating user settings:', err);
+                return res.status(500).json({ error: 'Error updating user settings.' });
+            }
+            // User settings updated successfully
+            res.status(200).json();
+        });
+    });
+});
 
 
 

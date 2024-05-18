@@ -1,0 +1,23 @@
+    /* Dark mode scrollbar design */
+    ::-webkit-scrollbar {
+        width: 15px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #455166;
+        /* Change this color to match your dark mode background color */
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #4A5568;
+        /* Change this color to match your scrollbar handle color */
+        border-radius: 5px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #2D3748;
+        /* Change this color to match your scrollbar handle hover color */
+    }

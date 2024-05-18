@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Page - Similar People</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/scrollbar.css">
+
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a202c;
+            /* Dark mode background */
+            color: #e2e8f0;
+            /* Light text color */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+
+        .popular-forums,
+        .recent-posts,
+        .profile-section {
+            background-color: #2d3748;
+            /* Darker background */
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .popular-forums {
+            position: sticky;
+            top: 1rem;
+            /* Adjust top position as needed */
+            z-index: 1000;
+            /* Ensure it appears above other content */
+            max-height: 436px;
+        }
+
+
+        .profile-section {
+            position: fixed;
+            top: 1rem;
+            /* Adjust this value based on your design */
+            left: calc(70% - 30px);
+            /* Adjust this value to center the profile section horizontally */
+            z-index: 1000;
+            /* Adjust z-index as needed */
+            width: 300px;
+            /* Set the width of the profile section */
+
+        }
+
+
+        .card {
+            background-color: #4a5568;
+            /* Card background color */
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #e2e8f0;
+            /* Light text color */
+            margin-bottom: 0.5rem;
+        }
+
+        .card-content {
+            color: #cbd5e0;
+            /* Lighter text color */
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            /* Darker button color */
+            color: #e2e8f0;
+            /* Light text color */
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background-color: #cbd5e0;
+            /* Button color on hover */
+        }
+
+        @keyframes fillBlue {
+            0% {
+                background-position: 0 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .text {
+            position: relative;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+            color: white;
+        }
+
+        .spinner-circle {
+            border-top-color: transparent;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Popular Forums Section -->
+        <div class="popular-forums">
+            <h2 class="text-lg font-bold mb-4">Most Popular Forums</h2>
+            <ul>
+                <li><a href="#">Forum Title 1</a></li>
+                <li><a href="#">Forum Title 2</a></li>
+                <li><a href="#">Forum Title 3</a></li>
+                <!-- Add more popular forums as needed -->
+            </ul>
+        </div>
+
+        <!-- Recent Posts Section -->
+        <div class="recent-posts">
+            <h2 class="text-lg font-bold mb-4">Recent Forum Posts</h2>
+
+            <!-- Search Bar -->
+            <div class="relative max-w-md mx-auto mb-4">
+                <div class="relative flex items-center w-full mb-4">
+                    <input id="searchInput" type="search"
+                        class="ml-3 peer h-12 w-full pl-12 pr-4 bg-transparent border border-gray-300 rounded-full focus:outline-none focus:border-blue-400 focus:pl-16 focus:pr-8"
+                        placeholder="Search..." autocomplete="off">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="absolute inset-y-0 left-3 my-auto h-8 w-12 border-r border-transparent stroke-gray-500 peer-focus:border-lime-300 peer-focus:stroke-lime-500"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <div id="autocompleteContainer" class="absolute top-12 left-0 w-full bg-gray-800 rounded shadow-lg">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="filters mb-4">
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Technology">Technology</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Art & Design">Art & Design</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Music">Music</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Science">Science</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Sports">Sports</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Fashion">Fashion</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Travel">Travel</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Food & Cooking">Food & Cooking</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Books & Literature">Books & Literature</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Movies & TV">Movies & TV</button>
+
+                <!-- Add more tag filters as needed -->
+            </div>
+
+            <!-- HTML structure for posts container -->
+            <div id="recentPostsContainer" class="results">
+
+            </div>
+            <div id="spinner" class="flex justify-center items-center h-20" style="display: none;">
+                <div class="flex justify-center items-center h-10">
+                    <div class="flex space-x-4 animate-spin">
+                        <div class="w-4 h-4 rounded-full bg-blue-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-blue-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-blue-500"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- scripts -->
+
+    <script src="/search.js"></script>
+    <script src="/searchResults.js"></script>
+    <script src="/profileLoad.js"></script>
+
+</body>
+
+</html>

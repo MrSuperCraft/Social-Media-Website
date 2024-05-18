@@ -9,6 +9,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/scrollbar.css">
+
     <style>
         /* Custom styles */
         body {
@@ -97,7 +100,6 @@
         }
 
         .filter-btn {
-            background-color: #4a5568;
             /* Darker button color */
             color: #e2e8f0;
             /* Light text color */
@@ -160,30 +162,42 @@
 
             <!-- Search Bar -->
             <div class="relative max-w-md mx-auto mb-4">
-                <div class="relative flex items-center w-full">
-                    <input type="search"
-                        class=" ml-3 peer h-12 w-full pl-12 pr-4 bg-transparent border border-gray-300 rounded-full focus:outline-none focus:border-blue-400 focus:pl-16 focus:pr-8"
-                        placeholder="Search...">
+                <div class="relative flex items-center w-full mb-4">
+                    <input id="searchInput" type="search"
+                        class="ml-3 peer h-12 w-full pl-12 pr-4 bg-transparent border border-gray-300 rounded-full focus:outline-none focus:border-blue-400 focus:pl-16 focus:pr-8"
+                        placeholder="Search..." autocomplete="off">
                     <svg xmlns="http://www.w3.org/2000/svg"
                         class="absolute inset-y-0 left-3 my-auto h-8 w-12 border-r border-transparent stroke-gray-500 peer-focus:border-lime-300 peer-focus:stroke-lime-500"
                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
+                    <div id="autocompleteContainer" class="absolute top-12 left-0 w-full bg-gray-800 rounded shadow-lg">
+                    </div>
                 </div>
             </div>
 
             <div class="filters mb-4">
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Technology</button>
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Art & Design</button>
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Music</button>
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Science</button>
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Sports</button>
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Fashion</button>
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Travel</button>
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Food & Cooking</button>
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Books & Literature</button>
-                <button class="filter-btn hover:text-black duration-500 transition-colors">Movies & TV</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Technology">Technology</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Art & Design">Art & Design</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Music">Music</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Science">Science</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Sports">Sports</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Fashion">Fashion</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Travel">Travel</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Food & Cooking">Food & Cooking</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Books & Literature">Books & Literature</button>
+                <button class="filter-btn hover:text-black duration-500 transition-colors bg-gray-800"
+                    data-filter="Movies & TV">Movies & TV</button>
 
                 <!-- Add more tag filters as needed -->
             </div>
@@ -247,6 +261,7 @@
     <script src="/user.js"></script>
     <script src="/profileLoad.js"></script>
     <script src="/loadPosts.js"></script>
+    <script src="/search.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

@@ -12,6 +12,9 @@
 
     <!-- Font Awesome CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/scrollbar.css">
+
     <style>
         .card {
             background-color: #4a5568;
@@ -68,8 +71,14 @@
 
 
 <body class="bg-gray-900 text-white">
-    <nav>
-        <a href="/feed"></a>
+    <!-- designed navbar -->
+    <nav class="bg-gray-800 p-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <span class="text-xl font-bold text-white ml-2"><i class="fa-solid fa-hashtag"></i> Similar
+                People</span>
+        </div>
+        <a href="/feed" class="text-white hover:text-indigo-500 transition-all duration-300">Back to Feed <i
+                class="fa-solid fa-arrow-right"></i></a>
     </nav>
     <main class="max-w-5xl mx-auto transition-all duration-300">
         <section class="banner relative mt-8">
@@ -90,6 +99,51 @@
                 <h1 class="text-2xl font-bold mt-4">
                     <%= user.username %>
                 </h1>
+
+                <section class="statistics-section mt-8">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="flex flex-col items-center justify-center p-4 bg-gray-800 rounded-md">
+                            <div class="text-2xl font-bold text-white">
+                                <%= user.post_count || 0 %>
+                            </div>
+                            <div class="text-lg text-gray-400">
+                                Posts
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center justify-center p-4 bg-gray-800 rounded-md">
+                            <div class="text-2xl font-bold text-white">
+                                <%= user.comment_count || 0 %>
+                            </div>
+                            <div class="text-lg text-gray-400">
+                                Comments
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center justify-center p-4 bg-gray-800 rounded-md">
+                            <div class="text-2xl font-bold text-white">
+                                <%= user.follow_count || 0 %>
+                            </div>
+                            <div class="text-lg text-gray-400">
+                                Follows
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <div class="flex flex-row">
+                    <!-- Follow Button -->
+                    <button id="followBtn"
+                        class="mt-4 inline-block px-6 py-3 text-white bg-blue-900 rounded-full hover:bg-blue-800 mr-3">
+                        Follow <i class="fas fa-user-plus"></i>
+                    </button>
+
+                    <a href="/settings"
+                        class=" mt-4 inline-block px-6 py-3 text-white bg-blue-900 rounded-full hover:bg-blue-800">
+                        Edit Profile <i class="fas fa-pencil"></i>
+                    </a>
+                </div>
+
+
                 <div class="relative">
                     <div id="bioInput"
                         class="w-64 h-16 bg-gray-800 text-white border border-gray-600 rounded-md mt-6 p-2 focus:outline-none focus:border-blue-400 resize-none"
@@ -102,7 +156,8 @@
 
         </section>
         <section class="activity-tabs mt-8">
-            <h1 class="font-bold text-left text-white">User Activity</h1>
+            <h1 class="font-bold text-left text-white text-xl">User Activity</h1>
+            <hr class="bg-gray-600 mb-4 rounded-md mt-3">
             <div class="user-activity-posts bg-gray-800 p-4 shadow rounded relative" id="recentPostsContainer">
                 <!-- Activity Spinner for Posts -->
                 <div class="spinner">

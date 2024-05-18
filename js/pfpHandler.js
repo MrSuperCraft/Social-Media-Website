@@ -69,10 +69,15 @@ function initializeDropzone() {
 
                     // Fetch the profile picture blob URL from the server
                     const res = await fetch(`/api/user/pfp/${userId}`);
+                    if (res.status == 404) {
+                        profilePicture.src = 'https://static.vecteezy.com/system/resources/thumbnails/002/534/006/small/social-media-chatting-online-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg'
+                    }
+
                     if (!res.ok) {
                         console.error('Error fetching profile picture');
                         return;
                     }
+
 
                     const blobUrl = await res.blob();
                     console.log('Blob URL:', blobUrl); // Log the fetched blob URL

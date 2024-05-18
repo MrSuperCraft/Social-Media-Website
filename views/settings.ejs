@@ -8,6 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/scrollbar.css">
+
 </head>
 
 <body class="bg-gray-900 text-white">
@@ -68,50 +71,59 @@
 
 
                 <!-- Profile Picture -->
-
-                <div>
-                    <label for="profile-picture" class="block text-sm font-medium">Profile Picture</label>
-                    <div class="flex items-center justify-center w-full">
-                        <label for="dropzone-file"
-                            class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-700 dark:hover:bg-gray-600 dark:bg-gray-800 hover:bg-gray-800 dark:border-gray-500 dark:hover:border-gray-400">
-                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                <svg class="w-8 h-8 mb-4 text-gray-400 dark:text-gray-300" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                </svg>
-                                <p class="mb-2 text-sm text-gray-400 dark:text-gray-300"><span
-                                        class="font-semibold">Click to upload</span> or drag and drop</p>
-                                <p class="text-xs text-gray-400 dark:text-gray-300">SVG, PNG, JPG, or GIF</p>
-                            </div>
-                            <input id="dropzone-file" type="file" class="hidden" />
-                        </label>
+                <div class="relative">
+                    <label for="profile-picture" class="block text-sm font-medium">Banner Image</label>
+                    <div id="profile-picture-dropzone"
+                        class="w-full h-48 border border-gray-700 border-dashed rounded-lg cursor-pointer bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-800 relative">
+                        <div id="profile-picture-content" class="flex flex-col items-center justify-center h-full">
+                            <svg class="w-8 h-8 mb-2 text-gray-400  dark:text-gray-400" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                            </svg>
+                            <p class="text-xs text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to
+                                    upload</span> or drag and drop</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">(SVG, PNG, JPG, GIF)</p>
+                        </div>
+                        <input id="profile-picture" type="file" accept="image/svg+xml, image/png, image/jpeg, image/gif"
+                            class="absolute top-0 left-0 opacity-0 cursor-pointer" />
                     </div>
-
                 </div>
+                <div>
+                    <button id="removeImageBtn"
+                        class=" bg-gray-800 text-gray-100 p-1 rounded-full hidden">Remove</button>
+                </div>
+
+
                 <!-- Banner Image -->
-                <div>
+                <div class="relative">
                     <label for="banner-image" class="block text-sm font-medium">Banner Image</label>
-                    <div class="flex items-center justify-center w-full">
-                        <label for="dropzone-file"
-                            class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-700 dark:hover:bg-gray-600 dark:bg-gray-800 hover:bg-gray-800 dark:border-gray-500 dark:hover:border-gray-400">
-                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                <svg class="w-8 h-8 mb-4 text-gray-400 dark:text-gray-300" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                </svg>
-                                <p class="mb-2 text-sm text-gray-400 dark:text-gray-300"><span
-                                        class="font-semibold">Click to upload</span> or drag and drop</p>
-                                <p class="text-xs text-gray-400 dark:text-gray-300">SVG, PNG, JPG, or GIF</p>
-                            </div>
-                            <input id="dropzone-file" type="file" class="hidden" />
-                        </label>
+                    <div id="banner-image-dropzone"
+                        class="w-full h-48 border border-gray-700 border-dashed rounded-lg cursor-pointer bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-800 relative">
+                        <div id="banner-image-content" class="flex flex-col items-center justify-center h-full">
+                            <svg class="w-8 h-8 mb-2 text-gray-400  dark:text-gray-400" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                            </svg>
+                            <p class="text-xs text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to
+                                    upload</span> or drag and drop</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">(SVG, PNG, JPG, GIF)</p>
+                        </div>
+                        <input id="banner-image" type="file" accept="image/svg+xml, image/png, image/jpeg, image/gif"
+                            class="absolute top-0 left-0 opacity-0 cursor-pointer" />
                     </div>
 
                 </div>
+
+                <div>
+                    <button id="removeImageBtn2"
+                        class=" bg-gray-800 text-gray-100 p-1 rounded-full hidden">Remove</button>
+                </div>
+
+
                 <!-- Submit Button -->
                 <div>
                     <button type="submit"
@@ -125,6 +137,7 @@
     <script src="/settings.js"></script>
     <script src="/validateForm.js"></script>
     <script src="/message.js"></script>
+    <script src="/user.js"></script>
 
 
 </body>
