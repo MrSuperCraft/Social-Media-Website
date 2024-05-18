@@ -1,37 +1,41 @@
+/**
+ * This file contains functions related to user data retrieval and session management.
+ * Each function performs a specific task such as fetching user ID based on username,
+ * retrieving session data, and getting a username from a user ID.
+ */
+
 // Function to fetch user ID based on username from the URL
 async function getUserIdByUsername() {
-
     let username = window.location.pathname.split('/')[1]; // Extract username from URL
 
-    // If the username is 'feed', fetch session data to get the username and user_id
+    // If the username is 'feed' or 'add-post', fetch session data to get the username and user_id
     if (username === 'feed' || username === 'add-post') {
         const sessionData = await getSessionData();
-        console.log(sessionData)
         username = sessionData.username;
         if (!username) {
             throw new Error('Invalid or missing username in session data');
         }
     }
 
+    // Check if the username is valid
     if (!username || username === 'feed' || username === 'add-post') {
         throw new Error('Invalid or missing username');
     }
 
-
-
+    // Fetch the user ID from the API endpoint
     try {
-        const response = await fetch(`/api/users/${username}`); // Assuming your API endpoint to fetch user ID is /api/users/:username
+        const response = await fetch(`/api/users/${username}`);
         if (!response.ok) {
             throw new Error('User not found');
         }
         const data = await response.json();
-        return data.userId; // Assuming the response contains the user ID
+        return data.userId;
     } catch (error) {
         throw new Error('Error fetching user ID');
     }
 }
 
-
+// Function to fetch session data from the server
 async function getSessionData() {
     try {
         const response = await fetch('/api/session-data');
@@ -39,7 +43,6 @@ async function getSessionData() {
             throw new Error('Failed to fetch session data');
         }
         const sessionData = await response.json();
-        console.log(sessionData);
         return sessionData;
     } catch (error) {
         console.error(error);
@@ -47,15 +50,14 @@ async function getSessionData() {
     }
 }
 
-
+// Function to retrieve username from user ID
 async function getUsernameFromId(userId) {
     try {
-        const response = await fetch(`/api/users/${userId}`); // Assuming your endpoint is '/api/users/:userId'
+        const response = await fetch(`/api/users/${userId}`);
         if (!response.ok) {
             throw new Error('Failed to fetch username');
         }
         const userData = await response.json();
-        console.log(userData.username)
         return userData.username;
     } catch (error) {
         console.error('Error fetching username:', error);

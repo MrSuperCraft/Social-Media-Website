@@ -1,8 +1,11 @@
+// Document ready function
 document.addEventListener('DOMContentLoaded', () => {
+    // Character count for bio input
     const bioInput = document.getElementById('bio');
     const charCount = document.getElementById('charCount');
     const bioStatus = document.getElementById('bioStatus');
 
+    // Event listener for bio input changes
     bioInput.addEventListener('input', function () {
         const remainingChars = 30 - this.value.length;
         charCount.textContent = remainingChars;
@@ -15,11 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
-
-
-
-
+// Fetch and populate user settings
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const res = await fetch('/api/user/settings');
@@ -36,6 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// Populate form with user data
 function populateForm(data) {
     const form = document.getElementById('settingsForm');
     if (!form) return;
@@ -52,23 +52,14 @@ function populateForm(data) {
     // Add other fields as needed
 }
 
-
-
-
-
-
-
-
-// Validation and submission
-
-
-
+// Form validation and submission
 document.addEventListener('DOMContentLoaded', async () => {
     const settingsForm = document.getElementById('settingsForm');
     const pfpInput = document.getElementById('profile-picture');
     const bannerInput = document.getElementById('banner-image');
     const msg = new MessageComponent();
 
+    // Event listener for form submission
     settingsForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -100,14 +91,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const sessionId = session.user_id;
             console.log(sessionId);
 
-
             formData.append('user_id', sessionId);
-            console.log(session.username)
-
+            console.log(session.username);
 
             if (usernameInput.value.trim() === session.username) {
                 // Usernames match, allow form submission
-                // No need to code further checks.
                 msg.showMessage('Usernames match, allowing form submission... ✅', 'info');
             } else {
                 // Usernames don't match, check for name availability
@@ -119,10 +107,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Username is available, allow form submission
             }
 
-
             if (emailInput.value.trim() === session.email) {
                 // Emails match, allow form submission
-                // No need to code further checks.
                 msg.showMessage('Emails match, allowing form submission... ✅', 'info');
             } else {
                 const isValidEmail = await validateEmail(emailInput.value);
@@ -131,7 +117,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return;
                 }
             }
-
 
             const updateResponse = await fetch('/api/update-user', {
                 method: 'POST',
@@ -150,7 +135,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
-
 
 // Function to validate form input
 function validateForm(username, email, password, bio) {
@@ -179,19 +163,18 @@ function validateForm(username, email, password, bio) {
     return isValid;
 }
 
-
-
-
-
+// Profile picture dropzone functionality
 document.addEventListener('DOMContentLoaded', () => {
     const dropzoneFileInput = document.getElementById('profile-picture');
     const dropzoneContent = document.getElementById('profile-picture-content');
     const removeImageBtn = document.getElementById('removeImageBtn');
 
+    // Event listener for clicking the dropzone
     dropzoneContent.addEventListener('click', () => {
         document.getElementById('profile-picture').click(); // Trigger file input click
     });
 
+    // Event listener for file input change
     dropzoneFileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -250,106 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
             d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
         </svg>
         <p class="text-xs text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to
-            upload</span> or drag and drop</p>
-        <p class="text-xs text-gray-500 dark:text-gray-400">(SVG, PNG, JPG, GIF)</p>`
+            upload</span> or drag and drop</p>`;
         dropzoneContent.classList.add('border', 'border-dashed', 'bg-gray-800', 'hover:bg-gray-700', 'dark:hover:bg-gray-600');
-        dropzoneContent.style.borderRadius = '20px';
-        dropzoneContent.parentElement.style.borderRadius = '20px';
-
-        dropzoneFileInput.value = ''; // Clear the file input value
+        dropzoneFileInput.value = '';
         removeImageBtn.classList.add('hidden');
     });
-
-});
-
-
-
-
-
-
-
-
-
-// Treating the dropzone for the banner image
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    const dropzoneFileInput = document.getElementById('banner-image');
-    const dropzoneContent = document.getElementById('banner-image-content');
-    const removeImageBtn = document.getElementById('removeImageBtn2');
-
-
-    dropzoneContent.addEventListener('click', () => {
-        document.getElementById('banner-image').click(); // Trigger file input click
-    });
-
-    dropzoneFileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const img = document.createElement('img');
-                img.src = reader.result;
-                img.classList.add('w-full', 'h-full', 'object-cover', 'rounded-lg');
-                dropzoneContent.innerHTML = '';
-                dropzoneContent.appendChild(img);
-                dropzoneContent.classList.remove('border', 'border-dashed', 'bg-gray-800', 'hover:bg-gray-700', 'dark:hover:bg-gray-600');
-                removeImageBtn.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Drag and drop functionality
-    dropzoneContent.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropzoneContent.classList.add('bg-gray-700', 'dark:bg-gray-600');
-    });
-
-    dropzoneContent.addEventListener('dragleave', () => {
-        dropzoneContent.classList.remove('bg-gray-700', 'dark:bg-gray-600');
-    });
-
-    dropzoneContent.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropzoneContent.classList.remove('bg-gray-700', 'dark:bg-gray-600');
-
-        const file = e.dataTransfer.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const img = document.createElement('img');
-                img.src = reader.result;
-                img.classList.add('w-full', 'h-full', 'object-cover', 'rounded-lg');
-                dropzoneContent.innerHTML = '';
-                dropzoneContent.appendChild(img);
-                dropzoneContent.classList.remove('border', 'border-dashed', 'bg-gray-800', 'hover:bg-gray-700', 'dark:hover:bg-gray-600');
-                removeImageBtn.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Button to remove the image
-    removeImageBtn.addEventListener('click', (e) => {
-        e.preventDefault(0);
-        dropzoneContent.innerHTML = `
-        <svg class="w-8 h-8 mb-2 text-gray-400  dark:text-gray-400" aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-        </svg>
-        <p class="text-xs text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to
-            upload</span> or drag and drop</p>
-        <p class="text-xs text-gray-500 dark:text-gray-400">(SVG, PNG, JPG, GIF)</p>`;
-        dropzoneContent.classList.add('border', 'border-dashed', 'bg-gray-800', 'hover:bg-gray-700', 'dark:hover:bg-gray-600');
-        dropzoneContent.style.borderRadius = '20px';
-        dropzoneContent.parentElement.style.borderRadius = '20px';
-
-        dropzoneFileInput.value = ''; // Clear the file input value
-        removeImageBtn.classList.add('hidden');
-    });
-
 });

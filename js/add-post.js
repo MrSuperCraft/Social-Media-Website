@@ -1,20 +1,25 @@
+// Event listener for when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Selecting all elements with the class 'filter-btn'
     const tagButtons = document.querySelectorAll('.filter-btn');
     const tagInput = document.getElementById('tagInput');
 
+    // Adding click event listeners to each tag button
     tagButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
             const tag = button.dataset.tag;
-            const isSelected = button.classList.toggle('bg-gray-800'); // Toggle background color
+            const isSelected = button.classList.toggle('bg-gray-800'); // Toggle selected background color
             const isActive = button.classList.toggle('active');
             button.classList.toggle('bg-gray-600', !isSelected); // Toggle background color based on isSelected
             button.classList.toggle('inactive', !isActive); // Toggle background color based on isSelected
 
+            // Update the selected tags in the input field
             updateSelectedTags(tag, isSelected);
         });
     });
 
+    // Function to update the selected tags input field
     function updateSelectedTags(tag, isSelected) {
         const currentTags = tagInput.value.split(',').map(t => t.trim());
         const tagIndex = currentTags.indexOf(tag);
@@ -26,12 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
         tagInput.value = currentTags.join(', ');
     }
 
-
-
-
-    // Get the form element
+    // Selecting the post form element
     const postForm = document.getElementById('postForm');
     const Msg = new MessageComponent();
+
+    // Adding submit event listener to the post form
     postForm.addEventListener('submit', async (e) => {
         e.preventDefault(); // Prevent the form from submitting normally
 
@@ -45,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const tags = Array.from(document.querySelectorAll('.filter-btn.active')).map(btn => btn.dataset.tag);
 
         try {
-
             const formData = new FormData();
             formData.append('title', title);
             formData.append('content', content);
@@ -56,19 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('image', image);
             }
 
+            // Send POST request to the server with the form data
             const response = await fetch(`/api/add-post/${user_id}`, {
                 method: 'POST',
                 body: formData,
             });
 
-
             const data = await response.json();
-            // Handle the response from the server
             console.log(data);
 
+            // Show success message and redirect to the feed page
             Msg.showMessage('success! Redirecting to the feed ✅', 'success');
-
-            setTimeout(window.location.href = '/feed', 2000) // Redirect to the feed page after successful post submission
+            setTimeout(() => {
+                window.location.href = '/feed';
+            }, 2000);
 
         } catch (error) {
             // Handle any errors that occur during the request
@@ -78,11 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
+// Event listener for when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     const contentTextarea = document.getElementById('content');
     const charCount = document.getElementById('charCount');
 
+    // Update character count on textarea input
     contentTextarea.addEventListener('input', () => {
         const content = contentTextarea.value;
         const remainingChars = 1000 - content.length;
@@ -90,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Automatically adjust textarea height based on content
 const tx = document.getElementsByTagName("textarea");
 for (let i = 0; i < tx.length; i++) {
     tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
@@ -101,31 +107,13 @@ function OnInput() {
     this.style.height = (this.scrollHeight) + "px";
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Event listener for when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     const dropzoneFileInput = document.getElementById('dropzone-file');
     const dropzoneContent = document.getElementById('dropzone-content');
     const removeImageBtn = document.getElementById('removeImageBtn');
 
+    // Handle file input change event
     dropzoneFileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -143,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Drag and drop functionality
+    // Handle drag and drop functionality
     dropzoneContent.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropzoneContent.classList.add('bg-gray-700', 'dark:bg-gray-600');
@@ -173,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Button to remove the image
+    // Handle remove image button click event
     removeImageBtn.addEventListener('click', () => {
         dropzoneContent.innerHTML = `
             <svg class="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">

@@ -1,10 +1,11 @@
+// Select the container for posts and the spinner element
 const postsContainer = document.getElementById('postsContainer');
 const spinner = document.getElementById('spinner');
 let page = 1; // Initial page number
 let offset = 0; // Initial offset value
 let initialLoadComplete = false; // Flag to track initial load
 
-// Function to fetch and load posts
+// Function to fetch and load posts from the API
 async function loadPosts() {
     try {
         spinner.style.display = 'block'; // Show spinner while loading
@@ -19,7 +20,7 @@ async function loadPosts() {
     }
 }
 
-// Function to handle post data
+// Function to handle the post data received from the API
 function handlePostData(data) {
     if (data.length === 0 && !initialLoadComplete) {
         showNoContentMessage();
@@ -47,7 +48,6 @@ function createPostCard(post) {
     card.style.position = 'relative'; // Ensure relative positioning for absolute elements inside
 
     // Construct card content based on post data
-    // Customize this part based on your post structure
     card.innerHTML = `
         <a href="/posts/${post.post_id}" class="card-link">
             <h3 class="card-title">${post.title}</h3>
@@ -71,8 +71,7 @@ function createPostCard(post) {
     likesContainer.style.position = 'absolute';
     likesContainer.style.bottom = '0';
     likesContainer.style.right = '0';
-    // set the margin from the corner to be 5 px from the corner
-    likesContainer.style.margin = '5px 5px 0 0';
+    likesContainer.style.margin = '5px 5px 0 0'; // Margin from the corner
     likesContainer.style.display = 'flex'; // Ensure flex display for positioning
 
     // Add event listener for like button click
@@ -98,8 +97,6 @@ function handleLikeClick(postId) {
     }
 
     // User has not liked the post, update the like count and mark as liked
-    // You can make an API call to update the like count in the database
-    // Update the UI to reflect the new like count and change the button style
     const likesCountElement = document.querySelector(`.likes-count[data-post-id="${postId}"]`);
     const likeButton = document.querySelector(`.like-button[data-post-id="${postId}"]`);
 
@@ -108,8 +105,6 @@ function handleLikeClick(postId) {
     likeButton.classList.add('liked');
 
     // Make API call to update the like count in the database
-    // You can use fetch API or any other HTTP library to make the request
-    // Replace the following code with your implementation
     fetch(`/api/posts/${postId}/like`, {
         method: 'POST',
         headers: {
@@ -120,7 +115,6 @@ function handleLikeClick(postId) {
         .then(response => response.json())
         .then(data => {
             // Handle the response from the server
-            // You can update the UI or perform any other actions based on the response
         })
         .catch(error => {
             // Handle any errors that occur during the API call
@@ -128,7 +122,7 @@ function handleLikeClick(postId) {
         });
 }
 
-// Function to render tags
+// Function to render tags for a post
 function renderTags(tags) {
     if (!tags || tags.trim() === '') return ''; // No tags to render
 
@@ -146,46 +140,7 @@ function renderTags(tags) {
     return `<div class="tags mt-2">${tagsHtml}</div>`;
 }
 
-// Function to format time ago (you can replace this with your implementation)
-function formatTimeAgo(createdAt) {
-    return createdAt; // Sample format
-}
-
-// Function to truncate text
-function truncateText(text, maxLength = 150) {
-    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
-}
-
-// Function to show no content message
-function showNoContentMessage() {
-    const emptyMessage = document.createElement('div');
-    emptyMessage.className = 'empty-message text-gray-500 text-center text-lg font-medium mt-5';
-    emptyMessage.innerText = `Well, there's nothing more here. Try next time!`;
-    postsContainer.appendChild(emptyMessage);
-
-    const noContentImage = document.createElement('img');
-    noContentImage.width = 250;
-    noContentImage.height = 200;
-    noContentImage.className = 'no-content-image mx-auto';
-    noContentImage.src = '/no-data.svg'; // Provide the path to your no data image
-    postsContainer.appendChild(noContentImage);
-}
-
-// Event listener for scrolling
-window.addEventListener('scroll', handleScroll);
-
-// Function to handle scrolling and load more posts
-function handleScroll() {
-    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    if (scrollTop + clientHeight >= scrollHeight - 5) {
-        loadPosts(); // Load more posts when reaching the bottom with a slight offset
-    }
-}
-
-// Initial load of posts
-loadPosts();
-
-
+// Function to get icon for a specific tag
 function getIconForTag(tag) {
     switch (tag.toLowerCase()) {
         case 'technology':
@@ -208,6 +163,46 @@ function getIconForTag(tag) {
             return 'fa-book-open';
         case 'movies & tv':
             return 'fa-tv';
+        default:
+            return 'fa-tag'; // Default icon for unspecified tags
     }
 }
 
+// Function to format time ago (you can replace this with your implementation)
+function formatTimeAgo(createdAt) {
+    return createdAt; // Sample format
+}
+
+// Function to truncate text to a specified length
+function truncateText(text, maxLength = 150) {
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+}
+
+// Function to show a message when there is no content to display
+function showNoContentMessage() {
+    const emptyMessage = document.createElement('div');
+    emptyMessage.className = 'empty-message text-gray-500 text-center text-lg font-medium mt-5';
+    emptyMessage.innerText = `Well, there's nothing more here. Try next time!`;
+    postsContainer.appendChild(emptyMessage);
+
+    const noContentImage = document.createElement('img');
+    noContentImage.width = 250;
+    noContentImage.height = 200;
+    noContentImage.className = 'no-content-image mx-auto';
+    noContentImage.src = '/no-data.svg'; // Provide the path to your no data image
+    postsContainer.appendChild(noContentImage);
+}
+
+// Event listener for scrolling to load more posts when reaching the bottom
+window.addEventListener('scroll', handleScroll);
+
+// Function to handle scrolling and load more posts
+function handleScroll() {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    if (scrollTop + clientHeight >= scrollHeight - 5) {
+        loadPosts(); // Load more posts when reaching the bottom with a slight offset
+    }
+}
+
+// Initial load of posts
+loadPosts();

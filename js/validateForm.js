@@ -1,6 +1,6 @@
 function validateForm() {
-    const username = document.getElementById('username').value.trim();
-    const email = document.getElementById('email').value.trim();
+    const username = document.getElementById('username').value.trim(); // Get the username value from the form
+    const email = document.getElementById('email').value.trim(); // Get the email value from the form
 
     // Perform validation
     if (!validateUsername(username)) {

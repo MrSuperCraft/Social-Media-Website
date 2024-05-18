@@ -43,7 +43,7 @@ app.use(session({
 
 /* Middlewares */
 
-// Create a middleware (isAuth) to check if a user exists in a session. If not, redirect to /login. This should apply to all routes that require a user to be logged in.
+//  check if a user exists in a session. If not, redirect to /login. This should apply to all routes that require a user to be logged in.
 
 const isAuth = (req, res, next) => {
     if (!req.session || !req.session.user) {
