@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /**
+    /*
      * Clears the autocomplete suggestions from the UI.
      */
     function clearAutocompleteSuggestions() {

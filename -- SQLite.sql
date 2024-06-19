@@ -14,25 +14,20 @@ CREATE TABLE IF NOT EXISTS users (
 
 
 CREATE TABLE IF NOT EXISTS posts (
+    title TEXT,
     post_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     content TEXT NOT NULL,
     post_image BLOB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     likes_count INTEGER DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    username TEXT,
+    tags TEXT,
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (username) REFERENCES users(username)
 );
 
-CREATE TABLE IF NOT EXISTS comments (
-    comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    post_id INTEGER NOT NULL,
-    content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    likes_count INTEGER DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (post_id) REFERENCES posts(post_id)
-);
 
 CREATE TABLE IF NOT EXISTS likes (
     like_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -110,3 +105,22 @@ BEGIN
 END;
 
 
+
+CREATE TRIGGER IF NOT EXISTS update_likes_count_after_insert
+AFTER INSERT ON likes
+FOR EACH ROW
+BEGIN
+    UPDATE posts
+    SET likes_count = likes_count + 1
+    WHERE post_id = NEW.post_id;
+END;
+
+
+CREATE TRIGGER IF NOT EXISTS update_likes_count_after_delete
+AFTER DELETE ON likes
+FOR EACH ROW
+BEGIN
+    UPDATE posts
+    SET likes_count = likes_count - 1
+    WHERE post_id = OLD.post_id;
+END;

@@ -594,7 +594,7 @@ app.get('/api/posts', async (req, res) => {
         const offset = (page - 1) * postsPerPage;
 
         // Fetch posts from database with offset and limit, excluding post_image column
-        const query = 'SELECT title, post_id, username, content, created_at, tags FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?';
+        const query = 'SELECT title, post_id, username, content, created_at, tags, likes_count FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?';
         db.all(query, [postsPerPage, offset], (err, rows) => {
             if (err) {
                 console.error('Error fetching posts:', err);
@@ -840,6 +840,78 @@ app.post('/api/update-user', upload.fields([{ name: 'profilePicture', maxCount: 
         });
     });
 });
+
+
+
+
+
+
+// Route to like a post
+app.post('/api/posts/:postId/like', (req, res) => {
+    const { user_id } = req.body;
+    const { postId } = req.params;
+
+    const queryCheck = `SELECT * FROM likes WHERE user_id = ? AND post_id = ?`;
+    const queryInsert = `INSERT INTO likes (user_id, post_id) VALUES (?, ?)`;
+
+    db.get(queryCheck, [user_id, postId], (err, row) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (!row) {
+            db.run(queryInsert, [user_id, postId], function (err) {
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+                return res.status(200).json({ message: 'Post liked successfully' });
+            });
+        } else {
+            return res.status(400).json({ message: 'Already liked' });
+        }
+    });
+});
+
+// Route to unlike a post
+app.post('/api/posts/:postId/unlike', (req, res) => {
+    const { user_id } = req.body;
+    const { postId } = req.params;
+
+    const queryDelete = `DELETE FROM likes WHERE user_id = ? AND post_id = ?`;
+
+    db.run(queryDelete, [user_id, postId], function (err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (this.changes === 0) {
+            return res.status(400).json({ message: 'No like found' });
+        }
+        return res.status(200).json({ message: 'Post unliked successfully' });
+    });
+});
+
+// Route to get like count for a post
+app.get('/api/posts/:postId/like-count', (req, res) => {
+    const { postId } = req.params;
+
+    const queryCount = `SELECT COUNT(*) AS like_count FROM likes WHERE post_id = ?`;
+
+    db.get(queryCount, [postId], (err, row) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        return res.status(200).json({ like_count: row.like_count });
+    });
+});
+
+
+
+
+
+
+
+
+
+
 
 
 

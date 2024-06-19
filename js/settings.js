@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event listener for bio input changes
     bioInput.addEventListener('input', function () {
-        const remainingChars = 30 - this.value.length;
+        const remainingChars = 80 - this.value.length;
         charCount.textContent = remainingChars;
 
         if (remainingChars === 0) {
@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const bioInput = document.getElementById('bio');
 
         if (!validateForm(usernameInput.value, emailInput.value, passwordInput.value, bioInput.value)) {
+            msg.showMessage('Please enter valid data.', 'error');
             return;
         }
 

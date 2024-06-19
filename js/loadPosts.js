@@ -59,8 +59,8 @@ function createPostCard(post) {
             </div>
         </a>
         <div class="likes-container">
-            <span class="likes-count">${post.likes || 0} </span>
-            <button class="like-button ${isUserLiked(post.post_id) ? 'liked' : ''}">
+            <span class="likes-count" data-post-id="${post.post_id}">${post.likes_count || 0} </span>
+            <button class="like-button ${isUserLiked(post.post_id) ? 'liked' : ''}" data-post-id="${post.post_id}">
                 <i class="fas fa-heart"></i>
             </button>
         </div>
@@ -81,46 +81,66 @@ function createPostCard(post) {
     return card;
 }
 
-// Function to check if the user has already liked the post
-function isUserLiked(postId) {
-    // Implement your logic to check if the user has liked the post
-    // You can store liked post IDs in local storage or a database
-    // Return true if the user has liked the post, otherwise false
-    return false; // Placeholder, replace with your implementation
+async function isUserLiked(postId) {
+    try {
+        const response = await fetch(`/api/posts/${postId}/like-count`);
+        const data = await response.json();
+        return data.like_count > 0; // Check if like_count is greater than 0 to determine if user has liked the post
+    } catch (error) {
+        console.error('Error checking if user liked post:', error);
+        return false; // Default to false if there's an error
+    }
 }
 
-// Function to handle like button click
-function handleLikeClick(postId) {
-    if (isUserLiked(postId)) {
-        // User has already liked the post, do nothing
-        return;
-    }
-
-    // User has not liked the post, update the like count and mark as liked
-    const likesCountElement = document.querySelector(`.likes-count[data-post-id="${postId}"]`);
+async function handleLikeClick(postId) {
     const likeButton = document.querySelector(`.like-button[data-post-id="${postId}"]`);
 
-    const newLikesCount = parseInt(likesCountElement.innerText) + 1;
-    likesCountElement.innerText = newLikesCount;
-    likeButton.classList.add('liked');
+    // Disable the like button to prevent multiple clicks
+    likeButton.disabled = true;
 
-    // Make API call to update the like count in the database
-    fetch(`/api/posts/${postId}/like`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ postId }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            // Handle the response from the server
-        })
-        .catch(error => {
-            // Handle any errors that occur during the API call
-            console.error('Error liking post:', error);
-        });
+    const isLiked = await isUserLiked(postId);
+
+    try {
+        const session = await getSessionData();
+        const sessionId = session.user_id;
+
+        if (isLiked) {
+            // User has already liked the post, send unlike request
+            await fetch(`/api/posts/${postId}/unlike`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: sessionId }),
+            });
+        } else {
+            // User has not liked the post, send like request
+            await fetch(`/api/posts/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: sessionId }),
+            });
+        }
+
+        // Update UI after like/unlike action
+        const likesCountElement = document.querySelector(`.likes-count[data-post-id="${postId}"]`);
+
+        const newLikesCount = parseInt(likesCountElement.innerText) + (isLiked ? -1 : 1);
+        likesCountElement.innerText = newLikesCount;
+        likeButton.classList.toggle('liked');
+    } catch (error) {
+        console.error('Error liking/unliking post:', error);
+        // Handle any errors that occur during the API call
+    } finally {
+        // Re-enable the like button after the API request completes
+        likeButton.disabled = false;
+    }
 }
+
+
+
 
 // Function to render tags for a post
 function renderTags(tags) {
